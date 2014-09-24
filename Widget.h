@@ -29,6 +29,7 @@ private:
 private:
     Board* m_board;
     BoardInterface m_boardInterface;
+    ChessPiece* pawn;
 
 };
 

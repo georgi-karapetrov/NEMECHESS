@@ -112,7 +112,7 @@ void GameEngine::setStandardGame()
 {
     setPiecesForStandardGame( white );
     setPiecesForStandardGame( black );
-    m_board->display();
+//    m_board->display();
 }
 
 void GameEngine::parseInstructions( const string& instruction )

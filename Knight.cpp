@@ -8,8 +8,8 @@ using namespace std;
 //using Chess::ChessPieceType;
 using namespace Chess::ChessComponents::ChessPieces;
 
-Knight::Knight( const Position& position, const Colour& colour, Board* board ) :
-    ChessPiece( position, colour, board, 'N' )
+Knight::Knight( const Position& position, const Colour& colour, Board* board )
+    : ChessPiece( position, colour, board, 'N' )
 {
 }
 

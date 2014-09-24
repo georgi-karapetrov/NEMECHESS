@@ -331,4 +331,3 @@ int Board::passedMoves( ChessPiece* piece ) const
 
     return iter->second;
 }
-
