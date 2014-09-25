@@ -1,6 +1,7 @@
 #ifndef BOARDINTERFACE_H
 #define BOARDINTERFACE_H
 
+#include <QBitmap>
 #include <QColor>
 #include <QImage>
 #include <QLabel>
