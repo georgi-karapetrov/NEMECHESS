@@ -9,6 +9,8 @@
 #include <QPoint>
 
 #include "Position.h"
+#include "GameEngine.h"
+#include "PiecesManipulator.h"
 #include "BoardInterface.h"
 #include "Board.h"
 #include "ChessPieceInterface.h"
@@ -16,6 +18,7 @@
 #include "Pawn.h"
 #include "King.h"
 
+using namespace Chess::GameLogic::GameComponents;
 using namespace Chess::ChessComponents::ChessPieces;
 
 class Widget : public QWidget
@@ -26,16 +29,23 @@ public:
     Widget( Board* board = 0, QWidget *parent = 0 );
     ~Widget();
 
+    void setBoard( Board* board );
+    Board* board() const;
+
 private:
-    Position toPosition( const int x, const int y );
+    Position toPosition( QPoint point );
 
 protected:
     virtual void paintEvent( QPaintEvent* event );
     virtual void mouseReleaseEvent( QMouseEvent* event );
 
 private:
-    Board*         m_board;
-    BoardInterface m_boardInterface;
+    BoardInterface    m_boardInterface;
+    Board*            m_board;
+    PiecesManipulator m_manipulator;
+    Position          m_from;
+    Position          m_to;
+    bool              m_isFigureSelected;
 };
 
 #endif // WIDGET_H

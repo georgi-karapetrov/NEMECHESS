@@ -31,34 +31,55 @@ vector<Position> Bishop::allowedMovements()
     //little boys, especially...
 
     while ( m_board->isValidPosition( Position( m_position.x() + i, m_position.y() + i ) )
-            && !m_board->isObstacle( Position( m_position.x() + i, m_position.y() + i ), m_colour ) )
+            && !m_board->isPiece( Position( m_position.x() + i, m_position.y() + i ) ) )
     {
         tmp.push_back( Position( m_position.x() + i, m_position.y() + i ) );
         i++;
     }
+    if ( m_board->isValidPosition( Position( m_position.x() + i, m_position.y() + i ) )
+         && !m_board->isObstacle( Position( m_position.x() + i, m_position.y() + i ), m_colour ) )
+    {
+        tmp.push_back( Position( m_position.x() + i, m_position.y() + i ) );
+    }
 
     i = 1;
     while ( m_board->isValidPosition( Position( m_position.x() + i, m_position.y() - i ) )
-            && !m_board->isObstacle( Position( m_position.x() + i, m_position.y() - i ), m_colour ) )
+            && !m_board->isPiece( Position( m_position.x() + i, m_position.y() - i ) ) )
     {
         tmp.push_back( Position( m_position.x() + i, m_position.y() - i ) );
         i++;
     }
+    if ( m_board->isValidPosition( Position( m_position.x() + i, m_position.y() - i ) )
+         && !m_board->isObstacle( Position( m_position.x() + i, m_position.y() - i ), m_colour ) )
+    {
+        tmp.push_back( Position( m_position.x() + i, m_position.y() - i ) );
+    }
+
 
     i = 1;
     while ( m_board->isValidPosition( Position( m_position.x() - i, m_position.y() + i ) )
-            && !m_board->isObstacle( Position( m_position.x() - i, m_position.y() + i ), m_colour ) )
+            && !m_board->isPiece( Position( m_position.x() - i, m_position.y() + i ) ) )
     {
         tmp.push_back( Position( m_position.x() - i, m_position.y() + i ) );
         i++;
     }
+    if ( m_board->isValidPosition( Position( m_position.x() - i, m_position.y() + i ) )
+         && !m_board->isObstacle( Position( m_position.x() - i, m_position.y() + i ), m_colour ) )
+    {
+        tmp.push_back( Position( m_position.x() - i, m_position.y() + i ) );
+    }
 
     i = 1;
     while ( m_board->isValidPosition( Position( m_position.x() - i, m_position.y() - i ) )
-            && !m_board->isObstacle( Position( m_position.x() - i, m_position.y() - i ), m_colour ) )
+            && !m_board->isPiece( Position( m_position.x() - i, m_position.y() - i ) ) )
     {
         tmp.push_back( Position( m_position.x() - i, m_position.y() - i ) );
         i++;
+    }
+    if ( m_board->isValidPosition( Position( m_position.x() - i, m_position.y() - i ) )
+         && !m_board->isObstacle( Position( m_position.x() - i, m_position.y() - i ), m_colour ) )
+    {
+        tmp.push_back( Position( m_position.x() - i, m_position.y() - i ) );
     }
 
     return tmp;

@@ -45,7 +45,7 @@ public:
     bool movePiece( const Position& from, const Position& to );
 
     bool placePieces( vector < ChessPiece* > pieces,
-                      unsigned int it);
+                      unsigned int it );
 
     bool isValidPosition( const Position& position ) const;
 

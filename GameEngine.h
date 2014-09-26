@@ -62,6 +62,9 @@ public:
     void setBoard( Board* const board );
     Board* board() const;
 
+    void setManipulator( const PiecesManipulator& manipulator );
+    PiecesManipulator manipulator() const;
+
     void addPlayer( Player& player );
     void nextPlayersTurn();
 

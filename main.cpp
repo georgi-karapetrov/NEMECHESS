@@ -14,6 +14,7 @@ int main(int argc, char *argv[])
 //    Board board( 8, 8, 50, 50 );
     GameEngine engine;
     engine.setStandardGame();
+
     Widget w( engine.board() );
     w.setFixedSize( engine.board()->cellWidth() * engine.board()->columns() + 50,
                     engine.board()->cellHeight() * engine.board()->rows() + 50 );

@@ -66,7 +66,6 @@ Error PiecesManipulator::makeAMove( const Position& from, const Position& to, Co
         return InvalidDestination;
     }
 
-
     m_moves.push( movement );
     return Success;
 }

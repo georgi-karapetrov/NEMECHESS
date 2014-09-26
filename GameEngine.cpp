@@ -42,6 +42,16 @@ Board* GameEngine::board() const
     return m_board;
 }
 
+void GameEngine::setManipulator( const PiecesManipulator& manipulator )
+{
+    m_manipulator = manipulator;
+}
+
+PiecesManipulator GameEngine::manipulator() const
+{
+    return m_manipulator;
+}
+
 void GameEngine::addPlayer(Player& player )
 {
     player.setBoard( m_board );
