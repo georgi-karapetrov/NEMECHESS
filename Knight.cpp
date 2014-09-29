@@ -33,7 +33,7 @@ void Knight::checkAllowedMovements ( int x, int y, vector< Position >& aVector )
     //petty obstacles cannot prevent him from jumping to his death
 
     if ( m_board->isValidPosition( Position ( x, y ) )
-         && !m_board->isObstacle( Position( x, y ), m_colour ))
+         && !m_board->isAlly( Position( x, y ), m_colour ))
     {
         aVector.push_back( Position( x, y ) );
     }

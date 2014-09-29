@@ -30,56 +30,76 @@ vector<Position> Bishop::allowedMovements()
     //from what I've heard, however, they're hardly obstructed by little children...
     //little boys, especially...
 
-    while ( m_board->isValidPosition( Position( m_position.x() + i, m_position.y() + i ) )
-            && !m_board->isPiece( Position( m_position.x() + i, m_position.y() + i ) ) )
+    Position tmpPosition = Position( m_position.x() + i, m_position.y() + i );
+
+    //+, +
+    while ( m_board->isValidPosition( tmpPosition )
+            && !m_board->isPiece( tmpPosition ) )
     {
-        tmp.push_back( Position( m_position.x() + i, m_position.y() + i ) );
-        i++;
+        tmp.push_back( tmpPosition );
+        ++ i;
+        tmpPosition = Position( m_position.x() + i, m_position.y() + i );
     }
-    if ( m_board->isValidPosition( Position( m_position.x() + i, m_position.y() + i ) )
-         && !m_board->isObstacle( Position( m_position.x() + i, m_position.y() + i ), m_colour ) )
+    if ( m_board->isValidPosition( tmpPosition )
+         &&  m_board->isPiece( tmpPosition )
+         && !m_board->isAlly( tmpPosition, m_colour )
+         &&  m_board->pieceAt( tmpPosition )->pieceType() != KING_TYPE )
     {
-        tmp.push_back( Position( m_position.x() + i, m_position.y() + i ) );
+        tmp.push_back( tmpPosition );
     }
 
+    //+, -
     i = 1;
-    while ( m_board->isValidPosition( Position( m_position.x() + i, m_position.y() - i ) )
-            && !m_board->isPiece( Position( m_position.x() + i, m_position.y() - i ) ) )
+    tmpPosition = Position( m_position.x() + i, m_position.y() - i );
+    while ( m_board->isValidPosition( tmpPosition )
+            && !m_board->isPiece( tmpPosition ) )
     {
-        tmp.push_back( Position( m_position.x() + i, m_position.y() - i ) );
-        i++;
+        tmp.push_back( tmpPosition );
+        ++ i;
+        tmpPosition = Position( m_position.x() + i, m_position.y() - i );
     }
-    if ( m_board->isValidPosition( Position( m_position.x() + i, m_position.y() - i ) )
-         && !m_board->isObstacle( Position( m_position.x() + i, m_position.y() - i ), m_colour ) )
+    if ( m_board->isValidPosition( tmpPosition )
+         &&  m_board->isPiece( tmpPosition )
+         && !m_board->isAlly( tmpPosition, m_colour )
+         &&  m_board->pieceAt( tmpPosition )->pieceType() != KING_TYPE )
     {
-        tmp.push_back( Position( m_position.x() + i, m_position.y() - i ) );
+        tmp.push_back( tmpPosition );
     }
 
-
+    //-, +
     i = 1;
-    while ( m_board->isValidPosition( Position( m_position.x() - i, m_position.y() + i ) )
-            && !m_board->isPiece( Position( m_position.x() - i, m_position.y() + i ) ) )
+    tmpPosition = Position( m_position.x() - i, m_position.y() + i );
+    while ( m_board->isValidPosition( tmpPosition )
+            && !m_board->isPiece( tmpPosition ) )
     {
-        tmp.push_back( Position( m_position.x() - i, m_position.y() + i ) );
-        i++;
+        tmp.push_back( tmpPosition );
+        ++ i;
+        tmpPosition = Position( m_position.x() - i, m_position.y() + i );
     }
-    if ( m_board->isValidPosition( Position( m_position.x() - i, m_position.y() + i ) )
-         && !m_board->isObstacle( Position( m_position.x() - i, m_position.y() + i ), m_colour ) )
+    if ( m_board->isValidPosition( tmpPosition )
+         &&  m_board->isPiece( tmpPosition )
+         && !m_board->isAlly( tmpPosition, m_colour )
+         &&  m_board->pieceAt( tmpPosition )->pieceType() != KING_TYPE )
     {
-        tmp.push_back( Position( m_position.x() - i, m_position.y() + i ) );
+        tmp.push_back( tmpPosition );
     }
 
+    //-, -
     i = 1;
-    while ( m_board->isValidPosition( Position( m_position.x() - i, m_position.y() - i ) )
-            && !m_board->isPiece( Position( m_position.x() - i, m_position.y() - i ) ) )
+    tmpPosition = Position( m_position.x() - i, m_position.y() - i );
+    while ( m_board->isValidPosition( tmpPosition )
+            && !m_board->isPiece( tmpPosition ) )
     {
-        tmp.push_back( Position( m_position.x() - i, m_position.y() - i ) );
-        i++;
+        tmp.push_back( tmpPosition );
+        ++ i;
+        tmpPosition = Position( m_position.x() - i, m_position.y() - i );
     }
-    if ( m_board->isValidPosition( Position( m_position.x() - i, m_position.y() - i ) )
-         && !m_board->isObstacle( Position( m_position.x() - i, m_position.y() - i ), m_colour ) )
+    if ( m_board->isValidPosition( tmpPosition )
+         &&  m_board->isPiece( tmpPosition )
+         && !m_board->isAlly( tmpPosition, m_colour )
+         &&  m_board->pieceAt( tmpPosition )->pieceType() != KING_TYPE )
     {
-        tmp.push_back( Position( m_position.x() - i, m_position.y() - i ) );
+        tmp.push_back( tmpPosition );
     }
 
     return tmp;

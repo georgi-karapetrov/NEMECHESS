@@ -21,7 +21,7 @@ public:
     virtual vector< Position > allowedMovements();
 
     void setInitialPosition( const Position& position );
-    Position getInitialPosition() const;
+    Position initialPosition() const;
 
     ChessPieceType pieceType();
 

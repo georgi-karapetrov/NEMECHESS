@@ -25,7 +25,7 @@ void King::checkAllowedMovements( const Position& position, vector < Position >&
 {
     //a false king, proven unworthy in war... he is limp, he is blind, but at least he is immortal. And French.
     //again being obstructed is a big deal
-    if ( m_board->isValidPosition( position ) && !m_board->isObstacle( position, m_colour ) )
+    if ( m_board->isValidPosition( position ) && !m_board->isAlly( position, m_colour ) )
     {
         aVector.push_back( position );
     }

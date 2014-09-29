@@ -32,7 +32,8 @@ SOURCES += main.cpp\
     Rook.cpp \
     SimpleMovement.cpp \
     ChessPieceInterface.cpp \
-    BoardInterface.cpp
+    BoardInterface.cpp \
+    MovesListView.cpp
 
 HEADERS  += Widget.h \
     Bishop.h \
@@ -52,7 +53,8 @@ HEADERS  += Widget.h \
     Rook.h \
     SimpleMovement.h \
     ChessPieceInterface.h \
-    BoardInterface.h
+    BoardInterface.h \
+    MovesListView.h
 
 OTHER_FILES += \
     NEMECHESS.pro.user

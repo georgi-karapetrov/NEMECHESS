@@ -38,7 +38,7 @@ public:
 private:
     void copy( const Position& );
 
-public:
+private:
     int m_x;
     int m_y;
 };

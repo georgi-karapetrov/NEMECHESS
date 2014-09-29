@@ -17,7 +17,7 @@ Rook::~Rook()
 
 bool Rook::takes( const Position& position )
 {
-    return ( m_board->isValidPosition( position ) )
+    return ( m_board->isPiece( position ) )
              && ( ( position.x() == m_position.x() )
                   ^ ( position.y() == m_position.y() ) );
 }
@@ -34,59 +34,74 @@ vector< Position > Rook::allowedMovements()
     int x;
     int y;
 
+    Position tmpPosition;
+
     for ( x = m_position.x() + 1; x < m_board->columns(); ++ x )
-    {        if ( m_board->isPiece( Position ( x, m_position.y() ) ) )
+    {
+        tmpPosition = Position( x, m_position.y() );
+        if ( m_board->isPiece( tmpPosition) )
         {
             break;
         }
 
-        tmp.push_back( Position( x, m_position.y() ) );
+        tmp.push_back( tmpPosition );
     }
-    if ( !m_board->isObstacle(  Position ( x, m_position.y() ), m_colour ) )
+    if ( m_board->isPiece( tmpPosition )
+         && !m_board->isAlly( tmpPosition, m_colour )
+         &&  m_board->pieceAt( tmpPosition )->pieceType() != KING_TYPE )
     {
-        tmp.push_back( Position( x, m_position.y() ) );
+        tmp.push_back( tmpPosition );
     }
 
     for ( x = m_position.x() - 1; x >= 0; -- x )
     {
-        if ( m_board->isPiece( Position ( x, m_position.y() ) ) )
+        tmpPosition = Position( x, m_position.y() );
+        if ( m_board->isPiece( tmpPosition ) )
         {
             break;
         }
 
-        tmp.push_back( Position( x, m_position.y() ) );
+        tmp.push_back( tmpPosition );
     }
-    if ( !m_board->isObstacle(  Position ( x, m_position.y() ), m_colour ) )
+    if ( m_board->isPiece( tmpPosition )
+         && !m_board->isAlly( tmpPosition, m_colour )
+         &&  m_board->pieceAt( tmpPosition )->pieceType() != KING_TYPE )
     {
-        tmp.push_back( Position( x, m_position.y() ) );
+        tmp.push_back( tmpPosition );
     }
 
     for ( y = m_position.y() - 1; y >= 0; -- y )
     {
-        if ( m_board->isPiece( Position ( m_position.x(), y ) ) )
+        tmpPosition = Position( m_position.x(), y );
+        if ( m_board->isPiece( tmpPosition ) )
         {
             break;
         }
 
-        tmp.push_back( Position( m_position.x(), y ) );
+        tmp.push_back( tmpPosition );
     }
-    if ( !m_board->isObstacle(  Position ( m_position.x(), y ), m_colour ) )
+    if ( m_board->isPiece( tmpPosition )
+         && !m_board->isAlly(  tmpPosition, m_colour )
+         &&  m_board->pieceAt( tmpPosition )->pieceType() != KING_TYPE )
     {
-        tmp.push_back( Position ( m_position.x(), y ) );
+        tmp.push_back( tmpPosition );
     }
 
     for ( y = m_position.y() + 1; y < m_board->rows(); ++ y )
     {
-        if ( m_board->isPiece( Position ( m_position.x(), y ) ) )
+        tmpPosition = Position( m_position.x(), y );
+        if ( m_board->isPiece( tmpPosition ) )
         {
             break;
         }
 
-        tmp.push_back( Position( m_position.x(), y ) );
+        tmp.push_back( tmpPosition );
     }
-    if ( !m_board->isObstacle(  Position ( m_position.x(), y ), m_colour ) )
+    if ( m_board->isPiece( tmpPosition )
+         && !m_board->isAlly( tmpPosition, m_colour )
+         &&  m_board->pieceAt( tmpPosition )->pieceType() != KING_TYPE )
     {
-        tmp.push_back( Position ( m_position.x(), y ) );
+        tmp.push_back( tmpPosition );
     }
 
     return tmp;
@@ -96,3 +111,6 @@ ChessPieceType Rook::pieceType()
 {
     return ROOK_TYPE;
 }
+
+
+

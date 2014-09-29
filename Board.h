@@ -58,7 +58,7 @@ public:
     bool inLoS( const Position& position, vector< ChessPiece* > aVector ) const;
 
     bool isPiece( const Position& position ) const;
-    bool isObstacle( const Position& position, const Colour& colour ) const;
+    bool isAlly( const Position& position, const Colour& colour ) const;
 
     ChessPiece* pieceAt( const Position& position ) const;
 

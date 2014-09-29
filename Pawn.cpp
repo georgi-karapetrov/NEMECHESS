@@ -33,8 +33,8 @@ vector< Position > Pawn::allowedMovements()
     //maybe if they got paid more they'd do more than move one step forward...
     //and stop if there's a fat guy in front of them
 
-    if ( m_board->isValidPosition( Position ( m_position.x(), m_position.y() + offset ) )
-         && !m_board->isPiece( Position ( m_position.x(), m_position.y() + offset ) ) )
+    if ( m_board->isValidPosition( Position( m_position.x(), m_position.y() + offset ) )
+         && !m_board->isPiece( Position( m_position.x(), m_position.y() + offset ) ) )
     {
         tmp.push_back( Position( m_position.x(), m_position.y() + offset ) );
     }
@@ -63,7 +63,7 @@ void Pawn::setInitialPosition( const Position& position )
     m_initialPosition = position;
 }
 
-Position Pawn::getInitialPosition() const
+Position Pawn::initialPosition() const
 {
     return m_initialPosition;
 }
@@ -72,13 +72,13 @@ bool Pawn::canAddToMovements( const Position& position ) const
 {
     bool validPos = m_board->isValidPosition( position );
     bool piece = m_board->isPiece( position );
-    bool obstacle = m_board->isObstacle( position, m_colour );
+    bool obstacle = m_board->isAlly( position, m_colour );
 
     return validPos && piece && !obstacle;
 
 //    return     m_board->isValidPosition( position )
 //           &&  m_board->isPiece( position )
-//           && !m_board->isObstacle( position, m_colour );
+//           && !m_board->isAlly( position, m_colour );
 }
 
 ChessPieceType Pawn::pieceType()

@@ -7,6 +7,9 @@
 #include <QDebug>
 #include <QMouseEvent>
 #include <QPoint>
+#include <QListView>
+#include <QStandardItem>
+#include <QStandardItemModel>
 
 #include "Position.h"
 #include "GameEngine.h"
@@ -17,6 +20,10 @@
 #include "ChessPiece.h"
 #include "Pawn.h"
 #include "King.h"
+#include "Movement.h"
+#include "SimpleMovement.h"
+#include "ComplexMovement.h"
+#include "MovesListView.h"
 
 using namespace Chess::GameLogic::GameComponents;
 using namespace Chess::ChessComponents::ChessPieces;
@@ -34,18 +41,24 @@ public:
 
 private:
     Position toPosition( QPoint point );
+    void addMoveToList( Movement* move );
+    QString toChessNotation( const Position& position );
 
 protected:
     virtual void paintEvent( QPaintEvent* event );
     virtual void mouseReleaseEvent( QMouseEvent* event );
 
+private slots:
+
+
 private:
-    BoardInterface    m_boardInterface;
-    Board*            m_board;
-    PiecesManipulator m_manipulator;
-    Position          m_from;
-    Position          m_to;
-    bool              m_isFigureSelected;
+    BoardInterface      m_boardInterface;
+    Board*              m_board;
+    PiecesManipulator   m_manipulator;
+    Position            m_from;
+    Position            m_to;
+    bool                m_isFigureSelected;
+    MovesListView*      m_listView;
 };
 
 #endif // WIDGET_H

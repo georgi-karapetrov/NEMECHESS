@@ -3,10 +3,10 @@
 
 using namespace Chess::ChessComponents::PlayField;
 
-Board::Board(const int rows,
-             const int columns ,
-             const int cellWidth,
-             const int cellHeight )
+Board::Board( const int rows,
+              const int columns ,
+              const int cellWidth,
+              const int cellHeight )
     : m_rows ( rows ),
       m_columns ( columns ),
       m_cellWidth( cellWidth ),
@@ -122,7 +122,7 @@ void Board::display()
 bool Board::isValidPosition( const Position& position ) const
 {
 
-    return    position.x() >= 0
+    return position.x() >= 0
            && position.x() < m_columns
            && position.y() >= 0
            && position.y() < m_rows;
@@ -130,6 +130,10 @@ bool Board::isValidPosition( const Position& position ) const
 
 bool Board::isPiece( const Position& position ) const
 {
+    if ( !this->isValidPosition( position ) )
+    {
+        return false;
+    }
     unordered_map< Position, ChessPiece* >::const_iterator iter = m_piecesMap.find( position );
 
     if ( iter == m_piecesMap.end() )
@@ -140,7 +144,7 @@ bool Board::isPiece( const Position& position ) const
     return iter->second != 0;
 }
 
-bool Board::isObstacle( const Position& position, const Colour& colour ) const
+bool Board::isAlly( const Position& position, const Colour& colour ) const
 {
     unordered_map< Position, ChessPiece* >::const_iterator iter = m_piecesMap.find( position );
 

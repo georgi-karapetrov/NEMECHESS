@@ -48,14 +48,14 @@ istream& operator>>( istream& is, Position& position )
 
 ostream& operator<<( ostream& os, const Position& position )
 {
-    os << position.m_x << ", " << position.m_y;
+    os << position.x() << ", " << position.y();
 
     return os;
 }
 
 bool Position::operator==( const Position& rhs) const
 {
-    return m_x == rhs.m_x && m_y == rhs.m_y;
+    return this->x() == rhs.x() && this->y() == rhs.y();
 }
 
 bool Position::operator!=( const Position& rhs ) const

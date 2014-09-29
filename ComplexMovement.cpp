@@ -2,9 +2,9 @@
 
 using namespace Chess::GameLogic::Movements;
 
-ComplexMovement::ComplexMovement(Board* const board = 0,
-                                  const vector<Movement *>& moves = vector< Movement* >() )//I hope this is  an empty vector,
-                                                                                    //doesn't work thew Gope way
+ComplexMovement::ComplexMovement( Board* const board = 0,
+                                  const vector< Movement* >& moves = vector< Movement* >() )//I hope this is  an empty vector,
+                                                                                    //doesn't work the Gope way
     : Movement( board ),
       m_moves( moves )
 {

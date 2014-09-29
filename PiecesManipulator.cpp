@@ -159,7 +159,7 @@ bool PiecesManipulator::isCastlingAllowed( ChessPiece* const king, ChessPiece* c
         for ( int i = king->position().x() + 1; i <= KSCASTLING_KING_X; ++ i )
         {
             Position position ( i, king->position().y() );
-            bool obstacle = m_board->isObstacle( position, colour );
+            bool obstacle = m_board->isAlly( position, colour );
             bool los = m_board->inLoS( position, enemyPieces );
             if ( obstacle || los )
             {
@@ -172,7 +172,7 @@ bool PiecesManipulator::isCastlingAllowed( ChessPiece* const king, ChessPiece* c
         for ( int i = king->position().x() - 1; i >= QSCASTLING_KING_X; -- i )
         {
             Position position ( i, king->position().y() );
-            if ( m_board->isObstacle( position, colour )
+            if ( m_board->isAlly( position, colour )
                  || m_board->inLoS( position, enemyPieces ) )
             {
                 return false;
