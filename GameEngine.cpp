@@ -2,7 +2,7 @@
 
 using namespace Chess::GameLogic::GameComponents;
 
-GameEngine::GameEngine( QObject* parent,
+GameEngine::GameEngine( QWidget* parent,
                         const int rows,
                         const int columns,
                         const int cellWidth,
@@ -16,7 +16,9 @@ GameEngine::GameEngine( QObject* parent,
       m_quit( false ),
       m_isFigureSelected( false ),
       m_from( Position( -1, -1 ) ),
-      m_to  ( Position( -1, -1 ) )
+      m_to  ( Position( -1, -1 ) ),
+      m_model( new MovesListModel( parent ) ),
+      m_widget( new Widget( parent ) )
 {
     for ( int i = 0; i < numberOfPlayers; ++i )
     {
@@ -70,6 +72,16 @@ PiecesManipulator GameEngine::manipulator() const
     return m_manipulator;
 }
 
+void GameEngine::setModel( MovesListModel* model )
+{
+    m_model = model;
+}
+
+MovesListModel* GameEngine::model()
+{
+    return m_model;
+}
+
 void GameEngine::addPlayer(Player& player )
 {
     player.setBoard( m_board );
@@ -81,9 +93,31 @@ void GameEngine::nextPlayersTurn()
     m_currentPlayerColour = nextColour( m_currentPlayerColour );
 }
 
-//OBSOLETE
-void GameEngine::run( const QPoint& point )
+void GameEngine::run()
 {
+    this->setStandardGame();
+
+    connect( m_widget, SIGNAL(clickCell(QPoint)), this, SLOT(clickCellListener(QPoint)));
+
+    m_widget->setView( new QListView( m_widget ) );
+
+    m_widget->setInterface( BoardInterface ( m_board ) );
+
+    m_widget->view()->setModel( m_model );
+
+    m_widget->view()->setGeometry( BoardInterface::X_OFFSET * 3 + m_board->columns() * m_board->cellWidth(),
+                                   BoardInterface::Y_OFFSET,
+                                   200,
+                                   m_board->rows() * m_board->cellHeight());
+
+    m_widget->view()->setEditTriggers( QAbstractItemView::NoEditTriggers );
+
+    m_widget->show();
+}
+
+void GameEngine::clickCellListener( const QPoint& point )
+{
+
 //    string instruction;
 //    while ( !m_quit )
 //    {
@@ -99,6 +133,7 @@ void GameEngine::run( const QPoint& point )
 
 //        m_board->display();
 //    }
+
     this->chewCoordinates( point );
 
     qDebug() << "Vroom-vroom!";
@@ -312,7 +347,8 @@ void GameEngine::chewCoordinates( const QPoint& point )
         m_to = position;
         if ( m_manipulator.makeAMove( m_from, m_to, m_board->pieceAt( m_from )->colour() ) == Success )
         {
-//            m_listView->addMove( this->toChessNotation( m_from ) + " -> " + this->toChessNotation( m_to ) );
+            m_model->addMove( this->toChessNotation( m_from ) + " -> " + this->toChessNotation( m_to ) );
+            qDebug() << m_model->m_list;
         }
 
         m_from = Position( -1, -1 );

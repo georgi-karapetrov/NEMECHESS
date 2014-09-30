@@ -5,10 +5,15 @@ const int BoardInterface::Y_OFFSET = 20;
 const QString BoardInterface::IMG_FOLDER = "impr/";
 const QString BoardInterface::EXT = ".png";
 
-BoardInterface::BoardInterface( Board* board, QWidget* parent )
-    : m_board( board ),
-      m_parent( parent )
+BoardInterface::BoardInterface( Board* board )
+    : m_board( board )
 {
+}
+
+BoardInterface& BoardInterface::operator=( const BoardInterface& other )
+{
+    m_board = other.m_board;
+    m_parent = other.m_parent;
 }
 
 QColor BoardInterface::alternateColour( const QColor& colour )

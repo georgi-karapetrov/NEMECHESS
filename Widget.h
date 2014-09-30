@@ -12,7 +12,6 @@
 #include <QStandardItemModel>
 
 #include "Position.h"
-#include "GameEngine.h"
 #include "PiecesManipulator.h"
 #include "BoardInterface.h"
 #include "Board.h"
@@ -23,6 +22,7 @@
 #include "SimpleMovement.h"
 #include "ComplexMovement.h"
 #include "MovesListView.h"
+#include "MovesListModel.h"
 
 using namespace Chess::GameLogic::GameComponents;
 using namespace Chess::ChessComponents::ChessPieces;
@@ -32,11 +32,14 @@ class Widget : public QWidget
     Q_OBJECT
 
 public:
-    Widget( QWidget *parent = 0 );
+    Widget( QWidget* parent = 0 );
     ~Widget();
 
     void setInterface( const BoardInterface& interface );
     BoardInterface interface() const;
+
+    void setView( QListView* view );
+    QListView* view();
 
 protected:
     virtual void paintEvent( QPaintEvent* event );
@@ -46,10 +49,9 @@ signals:
     void clickCell(QPoint point);
 
 private:
-    MovesListView* m_listView;
-    GameEngine*    m_engine;
+    QPoint         m_point;
+    QListView*     m_view;
     BoardInterface m_interface;
-    QPoint m_point;
 };
 
 #endif // WIDGET_H

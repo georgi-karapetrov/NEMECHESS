@@ -26,16 +26,17 @@ public:
     static const QString EXT;
 
 public:
-    BoardInterface( Board* board = 0, QWidget* parent = 0 );
+    BoardInterface( Board* board  = 0 );
 
     void drawBoard( QPainter& painter );
+    void drawChessPiece( QPainter& painter, ChessPiece* chessPiece = 0 );
+
+    BoardInterface& operator=( const BoardInterface& other );
 
 private:
     QColor alternateColour( const QColor& colour );
     void drawPosition( QPainter& painter, const Position& position, const QColor& colour );
     void drawNotationRulers( QPainter& painter );
-public:
-    void drawChessPiece( QPainter& painter, ChessPiece* chessPiece = 0 );
 
 private:
     Board*   m_board;

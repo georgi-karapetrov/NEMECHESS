@@ -18,6 +18,8 @@
 #include "Bishop.h"
 #include "King.h"
 #include "Queen.h"
+#include "MovesListModel.h"
+#include <Widget.h>
 
 namespace Chess{
 namespace ChessComponents {
@@ -57,7 +59,7 @@ class GameEngine : public QObject
 {
     Q_OBJECT
 public:
-    GameEngine( QObject* parent           =  0,
+    GameEngine( QWidget* parent           =  0,
                 const int rows            =  8,
                 const int columns         =  8,
                 const int cellWidth       = 50,
@@ -74,13 +76,16 @@ public:
     void setManipulator( const PiecesManipulator& manipulator );
     PiecesManipulator manipulator() const;
 
+    void setModel( MovesListModel* model );
+    MovesListModel* model();
+
     void addPlayer( Player& player );
     void nextPlayersTurn();
 
     void parseInstructions( const string& instruction );
     static Instruction instructionFromCode( const char& ch );
 
-//    void run(); //OBSOLETE
+    void run();
 
     void setStandardGame();
 
@@ -101,7 +106,7 @@ private:
     QString toChessNotation( const Position& position );
 
 public slots:
-    void run(const QPoint &point);
+    void clickCellListener(const QPoint &point);
 
 private:
     Board*            m_board;
@@ -112,6 +117,8 @@ private:
     Position          m_from;
     Position          m_to;
     bool              m_isFigureSelected;
+    MovesListModel*   m_model;
+    Widget*           m_widget;
 };
 
 }
