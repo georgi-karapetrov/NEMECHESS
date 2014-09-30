@@ -2,19 +2,37 @@
 
 using namespace Chess::GameLogic::GameComponents;
 
-GameEngine::GameEngine( const int rows,
+GameEngine::GameEngine( QObject* parent,
+                        const int rows,
                         const int columns,
                         const int cellWidth,
                         const int cellHeght,
                         const int numberOfPlayers,
                         Colour startingColour )
-    : m_board( new Board( rows, columns, cellWidth, cellHeght ) ),
+    : QObject( parent ),
+      m_board( new Board( rows, columns, cellWidth, cellHeght ) ),
       m_manipulator( m_board ),
       m_currentPlayerColour( startingColour ),
-      m_quit( false )
+      m_quit( false ),
+      m_isFigureSelected( false ),
+      m_from( Position( -1, -1 ) ),
+      m_to  ( Position( -1, -1 ) )
 {
     for ( int i = 0; i < numberOfPlayers; ++i )
     {
+        Player player( m_board, startingColour );
+        m_players.push_back( player );
+        startingColour = nextColour( startingColour );
+    }
+}
+
+GameEngine::GameEngine( Board* board, QObject* parent )
+    : QObject( parent ),
+      m_board( board )
+{
+    for ( int i = 0; i < 2; ++i )
+    {
+        Colour startingColour = Chess::white;
         Player player( m_board, startingColour );
         m_players.push_back( player );
         startingColour = nextColour( startingColour );
@@ -64,23 +82,26 @@ void GameEngine::nextPlayersTurn()
 }
 
 //OBSOLETE
-void GameEngine::run()
+void GameEngine::run( const QPoint& point )
 {
-    string instruction;
-    while ( !m_quit )
-    {
-        cout << ">>> ";
-        cin >> instruction;
+//    string instruction;
+//    while ( !m_quit )
+//    {
+//        cout << ">>> ";
+//        cin >> instruction;
 
-        parseInstructions( instruction );
-        cin.clear();
-        //cin.ignore();
-        //cin.flush();
+//        parseInstructions( instruction );
+//        cin.clear();
+//        //cin.ignore();
+//        //cin.flush();
 
-        system( "clear" );
+//        system( "clear" );
 
-        m_board->display();
-    }
+//        m_board->display();
+//    }
+    this->chewCoordinates( point );
+
+    qDebug() << "Vroom-vroom!";
 }
 
 void GameEngine::setPiecesForStandardGame( const Colour& colour )
@@ -269,5 +290,39 @@ void GameEngine::pressEnterToContinue()
 
     cin.ignore();
     cin.get();
+}
 
+Position GameEngine::toPosition( QPoint point )
+{
+    return Position( floor( ( point.x() - BoardInterface::X_OFFSET ) / m_board->cellWidth() ),
+                     floor( ( point.y() - BoardInterface::Y_OFFSET ) / m_board->cellHeight() ) );
+}
+
+QString GameEngine::toChessNotation( const Position& position )
+{
+    //todo: move logic in model
+    return QString( 'a' + position.x() + QString::number( m_board->rows() - position.y() ) );
+}
+
+void GameEngine::chewCoordinates( const QPoint& point )
+{
+    Position position = toPosition( point );
+    if ( m_isFigureSelected )
+    {
+        m_to = position;
+        if ( m_manipulator.makeAMove( m_from, m_to, m_board->pieceAt( m_from )->colour() ) == Success )
+        {
+//            m_listView->addMove( this->toChessNotation( m_from ) + " -> " + this->toChessNotation( m_to ) );
+        }
+
+        m_from = Position( -1, -1 );
+        m_to   = Position( -1, -1 );
+        m_isFigureSelected = false;
+    }
+    else if ( m_board->pieceAt( position ) )
+    {
+            m_from = position;
+            m_isFigureSelected = true;
+    }
+    qDebug() << position.x() << position.y();
 }

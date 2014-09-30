@@ -6,13 +6,13 @@
 #include <QImage>
 #include <QLabel>
 #include <QPainter>
-#include <QWidget>
+//#include <QWidget>
 #include <QPushButton>
 
 #include "Board.h"
 #include "Position.h"
 
-class ChessPieceInterface;
+class QWidget;
 
 using namespace Chess::ChessComponents::PlayField;
 
@@ -35,11 +35,11 @@ private:
     void drawPosition( QPainter& painter, const Position& position, const QColor& colour );
     void drawNotationRulers( QPainter& painter );
 public:
-    void drawChessPiece(QPainter &painter, ChessPiece* chessPiece = 0 );
+    void drawChessPiece( QPainter& painter, ChessPiece* chessPiece = 0 );
 
 private:
-    Board*               m_board;
-    QWidget*             m_parent;
+    Board*   m_board;
+    QWidget* m_parent;
 };
 
 #endif // BOARDINTERFACE_H

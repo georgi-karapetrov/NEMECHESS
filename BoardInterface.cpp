@@ -2,7 +2,7 @@
 
 const int BoardInterface::X_OFFSET = 20;
 const int BoardInterface::Y_OFFSET = 20;
-const QString BoardInterface::IMG_FOLDER = "etc/";
+const QString BoardInterface::IMG_FOLDER = "impr/";
 const QString BoardInterface::EXT = ".png";
 
 BoardInterface::BoardInterface( Board* board, QWidget* parent )
@@ -39,7 +39,7 @@ void BoardInterface::drawBoard( QPainter& painter )
     for ( int i = 0; i < m_board->columns(); ++ i )
     {
         QColor currentColour = i % 2 == 0 ? Qt::white
-                                           : Qt::gray;
+                                          : Qt::gray;
         for ( int j = 0; j < m_board->rows(); ++ j )
         {
             this->drawPosition( painter,
@@ -90,31 +90,17 @@ void BoardInterface::drawChessPiece( QPainter& painter, ChessPiece* chessPiece )
     QImage image;
     image.load( IMG_FOLDER + QString::number( chessPiece->colour() ) + "/" + QString::number( chessPiece->pieceType() ) + EXT );
 
-    QPixmap tmpPixmap = QPixmap::fromImage( image );
+    const QPixmap tmpPixmap = QPixmap::fromImage( image );
 
-//    QLabel* container = new QLabel( m_parent );
-//    container->setScaledContents( true );
 
     int scaleFactor = image.width() > image.height() ? image.width() / m_board->cellWidth()
                                                      : image.height() / m_board->cellHeight();
 
-//    if ( chessPiece->colour() == Chess::white )
-//    {
-//        QPixmap mask = tmpPixmap;
-//        tmpPixmap.fill( Qt::lightGray );
-//        tmpPixmap.setMask( mask.createMaskFromColor( Qt::transparent ) );
-//    }
-
-//    container->setGeometry( BoardInterface::X_OFFSET + 2 + chessPiece->position().x() * m_board->cellWidth(),
-//                            BoardInterface::Y_OFFSET + 2 + chessPiece->position().y() * m_board->cellHeight(),
-//                            image.width() / ( scaleFactor + 1 ),
-//                            image.height() / ( scaleFactor + 1 ) );
-
     painter.drawPixmap( BoardInterface::X_OFFSET + 2 + chessPiece->position().x() * m_board->cellWidth(),
-                            BoardInterface::Y_OFFSET + 2 + chessPiece->position().y() * m_board->cellHeight(),
-                            image.width() / ( scaleFactor + 1 ),
-                            image.height() / ( scaleFactor + 1 ),
-                            tmpPixmap );
+                        BoardInterface::Y_OFFSET + 2 + chessPiece->position().y() * m_board->cellHeight(),
+                        image.width() / ( scaleFactor + 1 ), // to look cooler
+                        image.height() / ( scaleFactor + 1 ),
+                        tmpPixmap );
 }
 
 

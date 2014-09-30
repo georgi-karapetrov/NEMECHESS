@@ -52,7 +52,7 @@ bool SimpleMovement::undoMove()
         m_capturedPieces.pop_back();
     }
 
-    m_board->m_movesCountMap[ piece ] --;
+    m_board->m_undoMovesCountMap[ piece ] --;
 
     return true;
 }

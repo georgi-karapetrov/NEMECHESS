@@ -60,18 +60,21 @@ public:
     ~PiecesManipulator();
 
     void undo();
+    void redo();
 
     Error makeAMove( const Position& from, const Position& to , Colour colour );
 
     bool isCastlingAllowed( ChessPiece* const king, ChessPiece* const rook, const CastlingType& type );
     bool castling( const Colour& colour, const CastlingType& type );
 
-    void destroy();
+    void flushUndo();
+    void flushRedo();
 
     bool kingInCheck( const Colour& colour );
 
 private:
-    stack< Movement* > m_moves;
+    stack< Movement* > m_undoMoves;
+    stack< Movement* > m_redoMoves;
     Colour             m_currentColour;
     Board*             m_board;
 };

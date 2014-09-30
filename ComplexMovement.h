@@ -25,7 +25,7 @@ public:
     Movement* popMove();
 
 private:
-    vector< Movement* > m_moves;
+    vector< Movement* > m_undoMoves;
 };
 
 }

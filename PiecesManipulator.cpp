@@ -16,16 +16,16 @@ PiecesManipulator::PiecesManipulator( Board* board )
 PiecesManipulator::~PiecesManipulator()
 {
     cout << "~PiecesManipulator()\n";
-    this->destroy();
+    this->flushUndo();
 }
 
-void PiecesManipulator::destroy()
+void PiecesManipulator::flushUndo()
 {
-    cout << "PiecesManipulator::destroy()\n";
-    while ( ! m_moves.empty() )
+    cout << "PiecesManipulator::flushUndo()\n";
+    while ( ! m_undoMoves.empty() )
     {
-        delete m_moves.top();
-        m_moves.pop();
+        delete m_undoMoves.top();
+        m_undoMoves.pop();
     }
 }
 
@@ -66,16 +66,33 @@ Error PiecesManipulator::makeAMove( const Position& from, const Position& to, Co
         return InvalidDestination;
     }
 
-    m_moves.push( movement );
+    m_undoMoves.push( movement );
     return Success;
 }
 
 void PiecesManipulator::undo()
 {
-    if ( !m_moves.empty() )
+    if ( !m_undoMoves.empty() )
     {
-        m_moves.top()->undoMove();
-        m_moves.pop();
+        m_undoMoves.top()->undoMove();
+        m_redoMoves.push( m_undoMoves.top() );
+        m_undoMoves.pop();
+    }
+}
+
+void PiecesManipulator::redo()
+{
+    m_redoMoves.top()->undoMove();
+    m_undoMoves.push( m_redoMoves.top() );
+    m_redoMoves.pop();
+}
+
+void PiecesManipulator::flushRedo()
+{
+    while ( !m_redoMoves.empty() )
+    {
+        delete m_redoMoves.top();
+        m_redoMoves.pop();
     }
 }
 
@@ -138,7 +155,7 @@ bool PiecesManipulator::castling( const Colour& colour, const CastlingType& type
 
     Movement* castlingMovement = new ComplexMovement( m_board, simpleMovements );
 
-    m_moves.push( castlingMovement );
+    m_undoMoves.push( castlingMovement );
 
     return true;
 }
@@ -201,3 +218,4 @@ bool PiecesManipulator::kingInCheck( const Colour& colour )
 
     return inCheck;
 }
+

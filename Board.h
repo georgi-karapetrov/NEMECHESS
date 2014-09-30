@@ -77,7 +77,7 @@ private:
     void copy( const Board& other );
 
 public:
-    unordered_map< ChessPiece*, int > m_movesCountMap;
+    unordered_map< ChessPiece*, int > m_undoMovesCountMap;
 
 private:
     int m_rows;

@@ -18,7 +18,7 @@ Board::Board( const int rows,
 Board::~Board()
 {
     cout << "~Board()\n";
-    m_movesCountMap.clear();
+    m_undoMovesCountMap.clear();
     m_piecesMap.clear();
     for ( auto iter = m_whitePieces.begin(); iter != m_whitePieces.end(); ++ iter )
     {
@@ -157,7 +157,7 @@ void Board::addPiece( ChessPiece* piece )
     {
         m_piecesMap[ piece->position() ] = piece;
         piece->colour() == white ? m_whitePieces.push_back( piece ) : m_blackPieces.push_back( piece );
-        m_movesCountMap[ piece ] = 0;
+        m_undoMovesCountMap[ piece ] = 0;
     }
 
     // add it to map
@@ -321,14 +321,14 @@ ChessPiece* Board::pieceAt( const Position& position ) const
 
 void Board::setPassedMoves( ChessPiece* piece, int anInteger )
 {
-    m_movesCountMap[ piece ] = anInteger;
+    m_undoMovesCountMap[ piece ] = anInteger;
 }
 
 int Board::passedMoves( ChessPiece* piece ) const
 {
-    unordered_map< ChessPiece*, int >::const_iterator iter = m_movesCountMap.find( piece );
+    unordered_map< ChessPiece*, int >::const_iterator iter = m_undoMovesCountMap.find( piece );
 
-    if ( iter == m_movesCountMap.end() )
+    if ( iter == m_undoMovesCountMap.end() )
     {
         return -1;
     }

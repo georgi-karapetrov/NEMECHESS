@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
-
+QT       += gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = NEMECHESS
@@ -31,7 +31,6 @@ SOURCES += main.cpp\
     Queen.cpp \
     Rook.cpp \
     SimpleMovement.cpp \
-    ChessPieceInterface.cpp \
     BoardInterface.cpp \
     MovesListView.cpp
 
@@ -52,7 +51,6 @@ HEADERS  += Widget.h \
     Queen.h \
     Rook.h \
     SimpleMovement.h \
-    ChessPieceInterface.h \
     BoardInterface.h \
     MovesListView.h
 
