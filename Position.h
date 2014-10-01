@@ -15,7 +15,7 @@ using namespace std;
 class Position
 {
 public:
-    Position( const int x = 0, const int y = 0 );
+    Position( const int x = -1, const int y = -1 );
     Position( const Position& other );
 
     ~Position();

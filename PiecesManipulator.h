@@ -7,7 +7,7 @@
 #include "SimpleMovement.h"
 #include "ComplexMovement.h"
 
-#include <stack>
+#include <QStack>
 
 namespace Chess {
 namespace ChessComponents {
@@ -72,11 +72,17 @@ public:
 
     bool kingInCheck( const Colour& colour );
 
+    void setUndoMoves( const QStack< Movement* >& movesStack );
+    QStack< Movement* > undoMoves() const;
+
+    void setRedoMoves( const QStack< Movement* >& movesStack );
+    QStack< Movement* > redoMoves() const;
+
 private:
-    stack< Movement* > m_undoMoves;
-    stack< Movement* > m_redoMoves;
-    Colour             m_currentColour;
-    Board*             m_board;
+    QStack< Movement* > m_undoMoves;
+    QStack< Movement* > m_redoMoves;
+    Colour              m_currentColour;
+    Board*              m_board;
 };
 
 }

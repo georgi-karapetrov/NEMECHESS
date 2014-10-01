@@ -62,7 +62,7 @@ void SimpleMovement::setFrom( const Position& from )
     m_from = from;
 }
 
-Position SimpleMovement::getFrom() const
+Position SimpleMovement::from() const
 {
     return m_from;
 }
@@ -72,7 +72,7 @@ void SimpleMovement::setTo( const Position& to )
     m_to = to;
 }
 
-Position SimpleMovement::getTo() const
+Position SimpleMovement::to() const
 {
     return m_to;
 }

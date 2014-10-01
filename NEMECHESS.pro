@@ -32,7 +32,6 @@ SOURCES += main.cpp\
     Rook.cpp \
     SimpleMovement.cpp \
     BoardInterface.cpp \
-    MovesListView.cpp \
     MovesListModel.cpp
 
 HEADERS  += Widget.h \
@@ -53,7 +52,6 @@ HEADERS  += Widget.h \
     Rook.h \
     SimpleMovement.h \
     BoardInterface.h \
-    MovesListView.h \
     MovesListModel.h
 
 OTHER_FILES += \

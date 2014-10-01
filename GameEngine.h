@@ -59,15 +59,13 @@ class GameEngine : public QObject
 {
     Q_OBJECT
 public:
-    GameEngine( QWidget* parent           =  0,
-                const int rows            =  8,
+    GameEngine( const int rows            =  8,
                 const int columns         =  8,
-                const int cellWidth       = 50,
-                const int cellHeght       = 50,
+                const int cellWidth       = 80,
+                const int cellHeght       = 80,
                 const int numberOfPlayers =  2,
                 Colour startingColour     = white );
 
-    GameEngine( Board* board, QObject* parent = 0 );
     virtual ~GameEngine();
 
     void setBoard( Board* const board );
@@ -86,10 +84,10 @@ public:
     static Instruction instructionFromCode( const char& ch );
 
     void run();
-
     void setStandardGame();
-
     void chewCoordinates( const QPoint& point );
+
+    QString toChessNotation( const Position& position );
 
 private:
     Position fromChessNotation( const char& x, const char& y );
@@ -103,10 +101,13 @@ private:
 
     Position toPosition( QPoint point );
     void addMoveToList( Movement* move );
-    QString toChessNotation( const Position& position );
+
+signals:
+    void jobFinished();
 
 public slots:
-    void clickCellListener(const QPoint &point);
+    void clickCellListener( const QPoint& point );
+    void lastMoveClickedListener( const QModelIndex& index );
 
 private:
     Board*            m_board;

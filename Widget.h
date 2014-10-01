@@ -21,7 +21,6 @@
 #include "Movement.h"
 #include "SimpleMovement.h"
 #include "ComplexMovement.h"
-#include "MovesListView.h"
 #include "MovesListModel.h"
 
 using namespace Chess::GameLogic::GameComponents;
@@ -35,11 +34,13 @@ public:
     Widget( QWidget* parent = 0 );
     ~Widget();
 
+    void setMovesListModel( MovesListModel* model );
+
     void setInterface( const BoardInterface& interface );
     BoardInterface interface() const;
 
     void setView( QListView* view );
-    QListView* view();
+    QListView* view() const;
 
 protected:
     virtual void paintEvent( QPaintEvent* event );
@@ -48,8 +49,10 @@ protected:
 signals:
     void clickCell(QPoint point);
 
+public slots:
+    void movesListItemClicked( QModelIndex );
+
 private:
-    QPoint         m_point;
     QListView*     m_view;
     BoardInterface m_interface;
 };

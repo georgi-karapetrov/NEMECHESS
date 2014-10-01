@@ -4,7 +4,7 @@
 #include "Position.h"
 
 #include <algorithm>
-#include <stack>
+#include <QStack>
 #include <vector>
 
 namespace Chess{
@@ -25,7 +25,7 @@ namespace ChessPieces {
 
 using std::vector;
 using std::unordered_map;
-using std::stack;
+//using std::QStack;
 
 using namespace Chess::ChessComponents::PlayField;
 

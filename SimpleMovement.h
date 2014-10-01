@@ -32,10 +32,10 @@ public:
     bool undoMove();
 
     void setFrom( const Position& from );
-    Position getFrom() const;
+    Position from() const;
 
     void setTo( const Position& to );
-    Position getTo() const;
+    Position to() const;
 
     void setBoard( Board* board );
     Board* board() const;

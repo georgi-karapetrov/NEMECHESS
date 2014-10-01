@@ -2,24 +2,35 @@
 
 using namespace Chess::GameLogic::GameComponents;
 
-GameEngine::GameEngine( QWidget* parent,
-                        const int rows,
+GameEngine::GameEngine( const int rows,
                         const int columns,
                         const int cellWidth,
                         const int cellHeght,
                         const int numberOfPlayers,
                         Colour startingColour )
-    : QObject( parent ),
+    : QObject( 0 ),
       m_board( new Board( rows, columns, cellWidth, cellHeght ) ),
       m_manipulator( m_board ),
       m_currentPlayerColour( startingColour ),
       m_quit( false ),
-      m_isFigureSelected( false ),
-      m_from( Position( -1, -1 ) ),
-      m_to  ( Position( -1, -1 ) ),
-      m_model( new MovesListModel( parent ) ),
-      m_widget( new Widget( parent ) )
+      m_isFigureSelected( false )
 {
+    m_widget = new Widget( 0 );
+    m_model =  new MovesListModel( this );
+
+    connect( m_widget, SIGNAL(clickCell(QPoint)), this, SLOT(clickCellListener(QPoint)));
+    connect( this, SIGNAL(jobFinished()), m_widget, SLOT(repaint()) );
+    connect( m_widget->view(), SIGNAL(clicked(QModelIndex)), this, SLOT(lastMoveClickedListener(QModelIndex)) );
+
+    m_widget->setInterface( BoardInterface ( m_board ) );
+    m_widget->setMovesListModel( m_model );
+    m_widget->view()->setGeometry( BoardInterface::X_OFFSET * 3 + m_board->columns() * m_board->cellWidth(),
+                                   BoardInterface::Y_OFFSET,
+                                   200,
+                                   m_board->rows() * m_board->cellHeight() );
+    m_widget->view()->setEditTriggers( QAbstractItemView::NoEditTriggers );
+    m_widget->show();
+
     for ( int i = 0; i < numberOfPlayers; ++i )
     {
         Player player( m_board, startingColour );
@@ -28,22 +39,11 @@ GameEngine::GameEngine( QWidget* parent,
     }
 }
 
-GameEngine::GameEngine( Board* board, QObject* parent )
-    : QObject( parent ),
-      m_board( board )
-{
-    for ( int i = 0; i < 2; ++i )
-    {
-        Colour startingColour = Chess::white;
-        Player player( m_board, startingColour );
-        m_players.push_back( player );
-        startingColour = nextColour( startingColour );
-    }
-}
 
 GameEngine::~GameEngine()
 {
     cout << "~GameEngine()\n";
+    delete m_widget;
     this->destroy();
 }
 
@@ -82,7 +82,7 @@ MovesListModel* GameEngine::model()
     return m_model;
 }
 
-void GameEngine::addPlayer(Player& player )
+void GameEngine::addPlayer( Player& player )
 {
     player.setBoard( m_board );
     m_players.push_back( player );
@@ -96,23 +96,6 @@ void GameEngine::nextPlayersTurn()
 void GameEngine::run()
 {
     this->setStandardGame();
-
-    connect( m_widget, SIGNAL(clickCell(QPoint)), this, SLOT(clickCellListener(QPoint)));
-
-    m_widget->setView( new QListView( m_widget ) );
-
-    m_widget->setInterface( BoardInterface ( m_board ) );
-
-    m_widget->view()->setModel( m_model );
-
-    m_widget->view()->setGeometry( BoardInterface::X_OFFSET * 3 + m_board->columns() * m_board->cellWidth(),
-                                   BoardInterface::Y_OFFSET,
-                                   200,
-                                   m_board->rows() * m_board->cellHeight());
-
-    m_widget->view()->setEditTriggers( QAbstractItemView::NoEditTriggers );
-
-    m_widget->show();
 }
 
 void GameEngine::clickCellListener( const QPoint& point )
@@ -137,6 +120,7 @@ void GameEngine::clickCellListener( const QPoint& point )
     this->chewCoordinates( point );
 
     qDebug() << "Vroom-vroom!";
+    emit( jobFinished() );
 }
 
 void GameEngine::setPiecesForStandardGame( const Colour& colour )
@@ -347,8 +331,15 @@ void GameEngine::chewCoordinates( const QPoint& point )
         m_to = position;
         if ( m_manipulator.makeAMove( m_from, m_to, m_board->pieceAt( m_from )->colour() ) == Success )
         {
+            if ( !m_manipulator.redoMoves().isEmpty() )
+            {
+                m_manipulator.flushRedo();
+                m_model->clearRedoMoves();
+            }
+
+            m_model->setLastRowClicked( m_model->rowCount() );
             m_model->addMove( this->toChessNotation( m_from ) + " -> " + this->toChessNotation( m_to ) );
-            qDebug() << m_model->m_list;
+//            qDebug() << m_model->m_list;
         }
 
         m_from = Position( -1, -1 );
@@ -361,4 +352,25 @@ void GameEngine::chewCoordinates( const QPoint& point )
             m_isFigureSelected = true;
     }
     qDebug() << position.x() << position.y();
+}
+
+void GameEngine::lastMoveClickedListener( const QModelIndex& index )
+{
+    //insert undo logic
+    if ( index.row() <= m_model->lastRowClicked() )
+    {
+        for ( int i = index.row(); i <= m_model->lastRowClicked(); ++ i )
+        {
+            m_manipulator.undo();
+        }
+    }
+    else
+    {
+        for ( int i = m_model->lastRowClicked(); i <= index.row(); ++ i )
+        {
+            m_manipulator.redo();
+        }
+    }
+    m_model->setLastRowClicked( index.row() );
+    emit( jobFinished() );
 }

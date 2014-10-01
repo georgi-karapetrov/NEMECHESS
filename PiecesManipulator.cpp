@@ -82,7 +82,7 @@ void PiecesManipulator::undo()
 
 void PiecesManipulator::redo()
 {
-    m_redoMoves.top()->undoMove();
+    m_redoMoves.top()->doMove();
     m_undoMoves.push( m_redoMoves.top() );
     m_redoMoves.pop();
 }
@@ -91,7 +91,7 @@ void PiecesManipulator::flushRedo()
 {
     while ( !m_redoMoves.empty() )
     {
-        delete m_redoMoves.top();
+//        delete m_redoMoves.top();
         m_redoMoves.pop();
     }
 }
@@ -219,3 +219,22 @@ bool PiecesManipulator::kingInCheck( const Colour& colour )
     return inCheck;
 }
 
+void PiecesManipulator::setUndoMoves( const QStack< Movement* >& movesStack )
+{
+    m_undoMoves = movesStack;
+}
+
+QStack< Movement* > PiecesManipulator::undoMoves() const
+{
+    return m_undoMoves;
+}
+
+void PiecesManipulator::setRedoMoves( const QStack< Movement* >& movesStack )
+{
+    m_redoMoves = movesStack;
+}
+
+QStack< Movement* > PiecesManipulator::redoMoves() const
+{
+    return m_redoMoves;
+}

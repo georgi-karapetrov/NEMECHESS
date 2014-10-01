@@ -1,10 +1,12 @@
 #include "Widget.h"
 
 Widget::Widget( QWidget* parent )
-    : QWidget( parent ),
-      m_point( QPoint( -1, -1 ) )
+    : QWidget( parent )
 {
     qDebug() << "Widget()";
+    m_view = new QListView( this );
+
+    connect(m_view, SIGNAL(clicked(QModelIndex)), this, SLOT(movesListItemClicked(QModelIndex)));
 }
 
 Widget::~Widget()
@@ -26,7 +28,7 @@ void Widget::setView( QListView* view )
     m_view = view;
 }
 
-QListView* Widget::view()
+QListView* Widget::view() const
 {
     return m_view;
 }
@@ -45,10 +47,17 @@ void Widget::mouseReleaseEvent( QMouseEvent* event )
 {
     Q_UNUSED( event );
 
-    m_point = this->mapFromGlobal( ( QCursor::pos() ) );
+    QPoint point = this->mapFromGlobal( ( QCursor::pos() ) );
 
-    emit clickCell( m_point );
-
-    this->repaint(); //remove!
+    emit clickCell( point );
 }
 
+void Widget::setMovesListModel( MovesListModel* model )
+{
+    m_view->setModel( model );
+}
+
+void Widget::movesListItemClicked(QModelIndex index)
+{
+    qDebug() << index.row();
+}

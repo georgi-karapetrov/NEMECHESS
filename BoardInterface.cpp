@@ -2,7 +2,7 @@
 
 const int BoardInterface::X_OFFSET = 20;
 const int BoardInterface::Y_OFFSET = 20;
-const QString BoardInterface::IMG_FOLDER = "impr/";
+const QString BoardInterface::IMG_FOLDER = "impr/"; //other is "etc/"
 const QString BoardInterface::EXT = ".png";
 
 BoardInterface::BoardInterface( Board* board )
@@ -14,6 +14,7 @@ BoardInterface& BoardInterface::operator=( const BoardInterface& other )
 {
     m_board = other.m_board;
     m_parent = other.m_parent;
+    return *this;
 }
 
 QColor BoardInterface::alternateColour( const QColor& colour )
@@ -107,28 +108,3 @@ void BoardInterface::drawChessPiece( QPainter& painter, ChessPiece* chessPiece )
                         image.height() / ( scaleFactor + 1 ),
                         tmpPixmap );
 }
-
-
-/*
-void BoardInterface::drawBoard( QPainter& painter )
-{
-    drawNotationRulers( painter );
-    for ( int i = 0; i <  m_board->columns(); ++ i )
-    {
-        QColor currentColour = i % 2 == 0 ? Qt::white
-                                          : Qt::gray;
-
-        for ( int j = 0; j <  m_board->rows(); ++ j )
-        {
-            QRect rect( i *  m_board->cellWidth() + X_OFFSET, j *  m_board->cellHeight() + Y_OFFSET,  m_board->cellWidth(),  m_board->cellHeight() );
-            painter.drawRect( rect );
-            painter.fillRect( rect, currentColour );
-            currentColour = this->alternateColour( currentColour );
-        }
-    }
-
-    //some lines that should be there but are not
-    painter.drawLine( X_OFFSET, Y_OFFSET, X_OFFSET,  m_board->rows() *  m_board->cellHeight() + Y_OFFSET );
-    painter.drawLine( X_OFFSET, Y_OFFSET,  m_board->columns() *  m_board->cellWidth() + X_OFFSET, Y_OFFSET  );
-}
-*/
