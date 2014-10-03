@@ -72,7 +72,8 @@ bool Pawn::canAddToMovements( const Position& position ) const
 {
     bool validPos = m_board->isValidPosition( position );
     bool piece = m_board->isPiece( position );
-    bool obstacle = m_board->isAlly( position, m_colour );
+    bool obstacle = m_board->isAlly( position, m_colour )
+                    || ( piece && m_board->pieceAt( position )->pieceType() == KING_TYPE );
 
     return validPos && piece && !obstacle;
 

@@ -19,16 +19,6 @@ PiecesManipulator::~PiecesManipulator()
     this->flushUndo();
 }
 
-void PiecesManipulator::flushUndo()
-{
-    cout << "PiecesManipulator::flushUndo()\n";
-    while ( ! m_undoMoves.empty() )
-    {
-        delete m_undoMoves.top();
-        m_undoMoves.pop();
-    }
-}
-
 Error PiecesManipulator::makeAMove( const Position& from, const Position& to, Colour colour )
 {
     if ( !m_board->isPiece( from ) )
@@ -80,11 +70,25 @@ void PiecesManipulator::undo()
     }
 }
 
+void PiecesManipulator::flushUndo()
+{
+    cout << "PiecesManipulator::flushUndo()\n";
+    while ( ! m_undoMoves.empty() )
+    {
+        delete m_undoMoves.top();
+        m_undoMoves.pop();
+    }
+}
+
+
 void PiecesManipulator::redo()
 {
-    m_redoMoves.top()->doMove();
-    m_undoMoves.push( m_redoMoves.top() );
-    m_redoMoves.pop();
+    if ( !m_redoMoves.empty() )
+    {
+        m_redoMoves.top()->doMove();
+        m_undoMoves.push( m_redoMoves.top() );
+        m_redoMoves.pop();
+    }
 }
 
 void PiecesManipulator::flushRedo()
@@ -211,6 +215,7 @@ bool PiecesManipulator::kingInCheck( const Colour& colour )
         if ( ( *iter )->pieceType() == KING_TYPE )
         {
             ChessPiece* falseKing = *iter;
+            qDebug() <<  "Das figure: " << falseKing->pieceType();
             inCheck = m_board->inLoS( falseKing->position(), enemyPieces );
             break;
         }

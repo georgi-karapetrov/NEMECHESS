@@ -7,6 +7,8 @@
 #include "SimpleMovement.h"
 #include "ComplexMovement.h"
 
+#include <QDebug>
+
 #include <QStack>
 
 namespace Chess {

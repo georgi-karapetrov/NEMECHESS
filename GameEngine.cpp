@@ -13,7 +13,8 @@ GameEngine::GameEngine( const int rows,
       m_manipulator( m_board ),
       m_currentPlayerColour( startingColour ),
       m_quit( false ),
-      m_isFigureSelected( false )
+      m_isFigureSelected( false ),
+      m_isFirstClick( true )
 {
     m_widget = new Widget( 0 );
     m_model =  new MovesListModel( this );
@@ -356,16 +357,18 @@ void GameEngine::chewCoordinates( const QPoint& point )
 
 void GameEngine::lastMoveClickedListener( const QModelIndex& index )
 {
-    //insert undo logic
-    if ( index.row() <= m_model->lastRowClicked() )
+
+    if ( index.row() <= m_model->lastRowClicked() && m_isFirstClick )
     {
         for ( int i = index.row(); i <= m_model->lastRowClicked(); ++ i )
         {
             m_manipulator.undo();
         }
+        m_isFirstClick = false;
     }
     else
     {
+        m_isFirstClick = true;
         for ( int i = m_model->lastRowClicked(); i <= index.row(); ++ i )
         {
             m_manipulator.redo();

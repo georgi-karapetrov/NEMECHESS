@@ -27,15 +27,18 @@ bool Knight::takes( const Position& position )
              ( abs( m_position.y() - position.y() ) == 1 ) ) );
 }
 
-void Knight::checkAllowedMovements ( int x, int y, vector< Position >& aVector )
+void Knight::checkAllowedMovements ( const Position& position, vector< Position >& aVector )
 {
     //no one is a match for the righteous knight
     //petty obstacles cannot prevent him from jumping to his death
 
-    if ( m_board->isValidPosition( Position ( x, y ) )
-         && !m_board->isAlly( Position( x, y ), m_colour ))
+    if ( m_board->isValidPosition( position ) )
     {
-        aVector.push_back( Position( x, y ) );
+        if ( !( m_board->isAlly( position, m_colour )
+                || ( m_board->isPiece( position ) &&  m_board->pieceAt( position )->pieceType() == KING_TYPE ) ) )
+        {
+            aVector.push_back( position );
+        }
     }
 }
 
@@ -43,14 +46,14 @@ vector< Position > Knight::allowedMovements()
 {
     vector< Position > tmp;
 
-    checkAllowedMovements( m_position.x() - 2, m_position.y() - 1, tmp );
-    checkAllowedMovements( m_position.x() - 2, m_position.y() + 1, tmp );
-    checkAllowedMovements( m_position.x() - 1, m_position.y() - 2, tmp );
-    checkAllowedMovements( m_position.x() - 1, m_position.y() + 2, tmp );
-    checkAllowedMovements( m_position.x() + 2, m_position.y() - 1, tmp );
-    checkAllowedMovements( m_position.x() + 2, m_position.y() + 1, tmp );
-    checkAllowedMovements( m_position.x() + 1, m_position.y() + 2, tmp );
-    checkAllowedMovements( m_position.x() + 1, m_position.y() - 2, tmp );
+    checkAllowedMovements( Position( m_position.x() - 2, m_position.y() - 1 ), tmp );
+    checkAllowedMovements( Position( m_position.x() - 2, m_position.y() + 1 ), tmp );
+    checkAllowedMovements( Position( m_position.x() - 1, m_position.y() - 2 ), tmp );
+    checkAllowedMovements( Position( m_position.x() - 1, m_position.y() + 2 ), tmp );
+    checkAllowedMovements( Position( m_position.x() + 2, m_position.y() - 1 ), tmp );
+    checkAllowedMovements( Position( m_position.x() + 2, m_position.y() + 1 ), tmp );
+    checkAllowedMovements( Position( m_position.x() + 1, m_position.y() + 2 ), tmp );
+    checkAllowedMovements( Position( m_position.x() + 1, m_position.y() - 2 ), tmp );
 
     return tmp;
 }

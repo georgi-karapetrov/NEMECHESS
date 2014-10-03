@@ -118,6 +118,7 @@ private:
     Position          m_from;
     Position          m_to;
     bool              m_isFigureSelected;
+    bool              m_isFirstClick;
     MovesListModel*   m_model;
     Widget*           m_widget;
 };

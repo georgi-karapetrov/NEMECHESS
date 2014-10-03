@@ -20,7 +20,7 @@ public:
     ChessPieceType pieceType();
 
 private:
-    void checkAllowedMovements ( int x, int y, vector< Position >& aVector );
+    void checkAllowedMovements ( const Position& position, vector< Position >& aVector );
 };
 
 }
