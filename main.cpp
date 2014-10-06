@@ -7,9 +7,9 @@
 using namespace Chess;
 using namespace Chess::GameLogic::GameComponents;
 
-int main(int argc, char *argv[])
+int main( int argc, char* argv[] )
 {
-    QApplication a(argc, argv);
+    QApplication a( argc, argv );
 
     GameEngine engine;
     engine.run();
@@ -17,6 +17,7 @@ int main(int argc, char *argv[])
     return a.exec();
 }
 
+// do not expand
 /*
               .,-:;//;:=,
           . :H@@@MM@M#H/.,+%;,

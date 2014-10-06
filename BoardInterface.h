@@ -33,6 +33,9 @@ public:
 
     BoardInterface& operator=( const BoardInterface& other );
 
+    void setSelectedPosition( const Position& position );
+    Position selectedPosition() const;
+
 private:
     QColor alternateColour( const QColor& colour );
     void drawPosition( QPainter& painter, const Position& position, const QColor& colour );
@@ -41,6 +44,7 @@ private:
 private:
     Board*   m_board;
     QWidget* m_parent;
+    Position m_selectedPosition;
 };
 
 #endif // BOARDINTERFACE_H

@@ -47,8 +47,7 @@ vector< Position > Rook::allowedMovements()
         tmp.push_back( tmpPosition );
     }
     if ( m_board->isPiece( tmpPosition )
-         && !m_board->isAlly( tmpPosition, m_colour )
-         &&  m_board->pieceAt( tmpPosition )->pieceType() != KING_TYPE )
+         && !m_board->isAlly( tmpPosition, m_colour ) )
     {
         tmp.push_back( tmpPosition );
     }
@@ -64,8 +63,7 @@ vector< Position > Rook::allowedMovements()
         tmp.push_back( tmpPosition );
     }
     if ( m_board->isPiece( tmpPosition )
-         && !m_board->isAlly( tmpPosition, m_colour )
-         &&  m_board->pieceAt( tmpPosition )->pieceType() != KING_TYPE )
+         && !m_board->isAlly( tmpPosition, m_colour ) )
     {
         tmp.push_back( tmpPosition );
     }
@@ -81,8 +79,7 @@ vector< Position > Rook::allowedMovements()
         tmp.push_back( tmpPosition );
     }
     if ( m_board->isPiece( tmpPosition )
-         && !m_board->isAlly(  tmpPosition, m_colour )
-         &&  m_board->pieceAt( tmpPosition )->pieceType() != KING_TYPE )
+         && !m_board->isAlly(  tmpPosition, m_colour ) )
     {
         tmp.push_back( tmpPosition );
     }
@@ -98,8 +95,7 @@ vector< Position > Rook::allowedMovements()
         tmp.push_back( tmpPosition );
     }
     if ( m_board->isPiece( tmpPosition )
-         && !m_board->isAlly( tmpPosition, m_colour )
-         &&  m_board->pieceAt( tmpPosition )->pieceType() != KING_TYPE )
+         && !m_board->isAlly( tmpPosition, m_colour ) )
     {
         tmp.push_back( tmpPosition );
     }

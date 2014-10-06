@@ -260,15 +260,18 @@ bool Board::inLoS( const Position& position, vector < ChessPiece* > aVector ) co
     {
         for ( unsigned int i = 0; i < aVector.size(); i++ )
         {
-            vector < Position > helper = aVector[ i ]->allowedMovements();
-            for ( unsigned int j = 0; j < helper.size(); j++ )
+            vector< Position > helper = aVector[i]->allowedMovements();
+            for ( auto iter = helper.begin(); iter != helper.end(); ++ iter  )
             {
-                if ( position == helper[ j ] )
+                if ( *iter == position )
                 {
-                   // cout << "Something sees me. I am at " << position << endl;
                     return true;
                 }
             }
+//            if ( aVector[ i ]->takes( position ) )
+//            {
+//                return true;
+//            }
         }
     }
     return false;
@@ -335,3 +338,25 @@ int Board::passedMoves( ChessPiece* piece ) const
 
     return iter->second;
 }
+
+/*
+bool Board::inLoS( const Position& position, vector < ChessPiece* > aVector ) const
+{
+    if ( !aVector.empty() )
+    {
+        for ( unsigned int i = 0; i < aVector.size(); i++ )
+        {
+            vector < Position > helper = aVector[ i ]->allowedMovements();
+            for ( unsigned int j = 0; j < helper.size(); j++ )
+            {
+                if ( position == helper[ j ] )
+                {
+                   // cout << "Something sees me. I am at " << position << endl;
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+*/

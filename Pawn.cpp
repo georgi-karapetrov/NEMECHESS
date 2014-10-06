@@ -72,14 +72,9 @@ bool Pawn::canAddToMovements( const Position& position ) const
 {
     bool validPos = m_board->isValidPosition( position );
     bool piece = m_board->isPiece( position );
-    bool obstacle = m_board->isAlly( position, m_colour )
-                    || ( piece && m_board->pieceAt( position )->pieceType() == KING_TYPE );
+    bool obstacle = m_board->isAlly( position, m_colour );
 
     return validPos && piece && !obstacle;
-
-//    return     m_board->isValidPosition( position )
-//           &&  m_board->isPiece( position )
-//           && !m_board->isAlly( position, m_colour );
 }
 
 ChessPieceType Pawn::pieceType()

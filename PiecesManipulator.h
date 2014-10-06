@@ -31,6 +31,7 @@ enum Error
     Success,
     InvalidDestination,
     Check,
+    KingCapture,
     ReachedEnd
 };
 
@@ -61,7 +62,7 @@ public:
     PiecesManipulator( Board* board = 0 );
     ~PiecesManipulator();
 
-    void undo();
+    void undo( bool isSilent = false );
     void redo();
 
     Error makeAMove( const Position& from, const Position& to , Colour colour );
@@ -72,7 +73,7 @@ public:
     void flushUndo();
     void flushRedo();
 
-    bool kingInCheck( const Colour& colour );
+    bool kingInCheck( const Colour& kingColour );
 
     void setUndoMoves( const QStack< Movement* >& movesStack );
     QStack< Movement* > undoMoves() const;

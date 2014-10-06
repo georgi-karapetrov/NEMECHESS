@@ -6,7 +6,8 @@ const QString BoardInterface::IMG_FOLDER = "impr/"; //other is "etc/"
 const QString BoardInterface::EXT = ".png";
 
 BoardInterface::BoardInterface( Board* board )
-    : m_board( board )
+    : m_board( board ),
+      m_selectedPosition( -1, -1 )
 {
 }
 
@@ -54,6 +55,14 @@ void BoardInterface::drawBoard( QPainter& painter )
                                 currentColour );
             currentColour = this->alternateColour( currentColour );
         }
+    }
+
+    if ( m_selectedPosition != Position( -1, -1 ) )
+    {
+        this->drawPosition( painter,
+                            Position( X_OFFSET + m_selectedPosition.x(),
+                                      Y_OFFSET + m_selectedPosition.y() - 8 ),
+                            QColor( Qt::magenta ) );
     }
 
     //some lines that should be there but are not
@@ -107,4 +116,14 @@ void BoardInterface::drawChessPiece( QPainter& painter, ChessPiece* chessPiece )
                         image.width() / ( scaleFactor + 1 ), // to look cooler
                         image.height() / ( scaleFactor + 1 ),
                         tmpPixmap );
+}
+
+void BoardInterface::setSelectedPosition( const Position& position )
+{
+    m_selectedPosition = position;
+}
+
+Position BoardInterface::selectedPosition() const
+{
+    return m_selectedPosition;
 }

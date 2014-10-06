@@ -34,8 +34,7 @@ void Knight::checkAllowedMovements ( const Position& position, vector< Position 
 
     if ( m_board->isValidPosition( position ) )
     {
-        if ( !( m_board->isAlly( position, m_colour )
-                || ( m_board->isPiece( position ) &&  m_board->pieceAt( position )->pieceType() == KING_TYPE ) ) )
+        if ( !m_board->isAlly( position, m_colour ) )
         {
             aVector.push_back( position );
         }

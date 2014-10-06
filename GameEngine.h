@@ -1,6 +1,9 @@
 ﻿#ifndef GAMEENGINE_H
 #define GAMEENGINE_H
 
+#define PLAYER1 m_players[ 0 ]
+#define PLAYER2 m_players[ 1 ]
+
 #include "Board.h"
 #include "PiecesManipulator.h"
 #include "Player.h"
@@ -59,12 +62,12 @@ class GameEngine : public QObject
 {
     Q_OBJECT
 public:
-    GameEngine( const int rows            =  8,
-                const int columns         =  8,
-                const int cellWidth       = 80,
-                const int cellHeght       = 80,
-                const int numberOfPlayers =  2,
-                Colour startingColour     = white );
+    GameEngine( const int rows               =  8,
+                const int columns            =  8,
+                const int cellWidth          = 80,
+                const int cellHeght          = 80,
+                const int numberOfPlayers    =  2,
+                Colour startingColour = Chess::white );
 
     virtual ~GameEngine();
 
@@ -92,6 +95,7 @@ public:
 private:
     Position fromChessNotation( const char& x, const char& y );
     void setPiecesForStandardGame( const Colour& colour );
+    void setPiecesForTesting();
 
     void quit();
        /*seek and*/
@@ -101,9 +105,13 @@ private:
 
     Position toPosition( QPoint point );
     void addMoveToList( Movement* move );
+    void selectFigure( const Position& position );
+
+    bool kingIsSafe( const Position& from, const Position& to, const Colour& colour );
 
 signals:
     void jobFinished();
+    void figureSelected( const Position& position );
 
 public slots:
     void clickCellListener( const QPoint& point );
@@ -119,6 +127,7 @@ private:
     Position          m_to;
     bool              m_isFigureSelected;
     bool              m_isFirstClick;
+    bool              m_inCheckFlag;
     MovesListModel*   m_model;
     Widget*           m_widget;
 };

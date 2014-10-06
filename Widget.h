@@ -51,6 +51,7 @@ signals:
 
 public slots:
     void movesListItemClicked( QModelIndex );
+    void figureSelectedListener( const Position& );
 
 private:
     QListView*     m_view;

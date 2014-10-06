@@ -21,7 +21,7 @@ PiecesManipulator::~PiecesManipulator()
 
 Error PiecesManipulator::makeAMove( const Position& from, const Position& to, Colour colour )
 {
-    if ( !m_board->isPiece( from ) )
+    if ( !m_board->isPiece( from ) || !m_board->isValidPosition( to ) )
     {
         return EmptyPosition;
     }
@@ -31,27 +31,28 @@ Error PiecesManipulator::makeAMove( const Position& from, const Position& to, Co
         return WrongColour;
     }
 
-    if ( this->kingInCheck( colour ) && m_board->pieceAt( from )->pieceType() != KING_TYPE )
+    if ( m_board->isPiece( to )
+         && m_board->pieceAt( to )->pieceType() == KING_TYPE )
     {
-        return Check;
+        return KingCapture;
     }
+
+//    if ( this->kingInCheck( colour ) )// && m_board->pieceAt( from )->pieceType() != KING_TYPE )
+//    {
+//        qDebug() << "Your king's in trouble!";
+//        return Check;
+//    }
 
     //if the figure attempts to move in its allowed movements
     vector< Position > tmp = m_board->pieceAt( from )->allowedMovements();
-    unsigned int i = 0;
-    bool flag = false;
-    while ( i < tmp.size() && !flag )
+    if ( std::find( tmp.begin(), tmp.end(), to ) == tmp.end() )
     {
-        if ( tmp[ i ] == to )
-        {
-            flag = true;
-        }
-        ++ i;
+        return InvalidDestination;
     }
 
     Movement* movement = new SimpleMovement( from, to, m_board );
 
-    if ( !flag || !movement->doMove() )
+    if ( ! movement->doMove() )
     {
         return InvalidDestination;
     }
@@ -60,19 +61,22 @@ Error PiecesManipulator::makeAMove( const Position& from, const Position& to, Co
     return Success;
 }
 
-void PiecesManipulator::undo()
+void PiecesManipulator::undo( bool isSilent )
 {
     if ( !m_undoMoves.empty() )
     {
         m_undoMoves.top()->undoMove();
-        m_redoMoves.push( m_undoMoves.top() );
-        m_undoMoves.pop();
+        if ( ! isSilent )
+        {
+            m_redoMoves.push( m_undoMoves.top() );
+            m_undoMoves.pop();
+        }
     }
 }
 
 void PiecesManipulator::flushUndo()
 {
-    cout << "PiecesManipulator::flushUndo()\n";
+    cout << "PiecesManipulator::destroy()\n";
     while ( ! m_undoMoves.empty() )
     {
         delete m_undoMoves.top();
@@ -204,10 +208,35 @@ bool PiecesManipulator::isCastlingAllowed( ChessPiece* const king, ChessPiece* c
     return true;
 }
 
-bool PiecesManipulator::kingInCheck( const Colour& colour )
+QString spitPieceType( ChessPiece* piece )
 {
-    const vector< ChessPiece* >& tempPieces  = colour == white ? m_board->whitePieces() : m_board->blackPieces();
-    const vector< ChessPiece* >& enemyPieces = colour == white ? m_board->blackPieces() : m_board->whitePieces();
+    if ( piece != 0 )
+    {
+        switch ( piece->pieceType() )
+        {
+        case PAWN_TYPE:
+            return "PAWN";
+        case ROOK_TYPE:
+            return "ROOK";
+        case BISHOP_TYPE:
+            return "BISHOP";
+        case KNIGHT_TYPE:
+            return "KNIGHT";
+        case QUEEN_TYPE:
+            return "QUEEN";
+        case KING_TYPE:
+            return "KING";
+        default:
+            return "Something else";
+        }
+    }
+    return "Something else";
+}
+
+bool PiecesManipulator::kingInCheck( const Colour& kingColour )
+{
+    const vector< ChessPiece* >& tempPieces  = kingColour == white ? m_board->whitePieces() : m_board->blackPieces();
+    const vector< ChessPiece* >& enemyPieces = kingColour == white ? m_board->blackPieces() : m_board->whitePieces();
 
     bool inCheck = false;
     for ( auto iter = tempPieces.begin(); iter != tempPieces.end(); ++ iter )
@@ -215,7 +244,7 @@ bool PiecesManipulator::kingInCheck( const Colour& colour )
         if ( ( *iter )->pieceType() == KING_TYPE )
         {
             ChessPiece* falseKing = *iter;
-            qDebug() <<  "Das figure: " << falseKing->pieceType();
+//            qDebug() <<  "Das figure: " << spitPieceType(falseKing);
             inCheck = m_board->inLoS( falseKing->position(), enemyPieces );
             break;
         }
@@ -243,3 +272,4 @@ QStack< Movement* > PiecesManipulator::redoMoves() const
 {
     return m_redoMoves;
 }
+

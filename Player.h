@@ -31,9 +31,18 @@ public:
 
     bool playsWith( const Colour& colour );
 
+    bool isInCheck() const;
+
+    void setManipulator( PiecesManipulator* manipulator );
+    PiecesManipulator* manipulator() const;
+
+    bool checkStatus();
+    bool kingInCheck();
+
 private:
-    Colour m_colour;
-    Board* m_board;
+    Colour             m_colour;
+    Board*             m_board;
+    PiecesManipulator* m_manipulator;
 };
 
 }
