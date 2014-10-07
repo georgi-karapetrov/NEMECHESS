@@ -98,9 +98,11 @@ void GameEngine::nextPlayersTurn()
 
 void GameEngine::run()
 {
-//    this->setStandardGame();
-    this->setPiecesForTesting();
+    this->setStandardGame();
+//    this->setPiecesForTesting();
 }
+
+// TODO: intelligent marked square
 
 void GameEngine::clickCellListener( const QPoint& point )
 {
@@ -442,7 +444,8 @@ void GameEngine::selectFigure( const Position& position )
 {
     m_from = position;
     m_isFigureSelected = true;
-//    emit figureSelected( position );
+    qDebug() << "Position taken as:" << position.x() << position.y();
+    emit figureSelected( position );
 }
 
 //unused

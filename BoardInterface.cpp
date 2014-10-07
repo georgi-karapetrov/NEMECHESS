@@ -28,15 +28,20 @@ QColor BoardInterface::alternateColour( const QColor& colour )
     return Qt::white;
 }
 
-void BoardInterface::drawPosition( QPainter& painter, const Position& position, const QColor& colour )
+void BoardInterface::drawPosition( QPainter& painter, const Position& position, const QColor& colour, bool bordered )
 {
     QRect rect( position.x(),
                 position.y(),
                 m_board->cellWidth(),
                 m_board->cellHeight() );
 
-    painter.drawRect( rect );
     painter.fillRect( rect, colour );
+
+    if ( bordered )
+    {
+        painter.drawRect( rect );
+    }
+
 }
 
 void BoardInterface::drawBoard( QPainter& painter )
@@ -60,9 +65,17 @@ void BoardInterface::drawBoard( QPainter& painter )
     if ( m_selectedPosition != Position( -1, -1 ) )
     {
         this->drawPosition( painter,
-                            Position( X_OFFSET + m_selectedPosition.x(),
-                                      Y_OFFSET + m_selectedPosition.y() - 8 ),
+                            Position( X_OFFSET + m_selectedPosition.x() * m_board->cellWidth(),
+                                      Y_OFFSET + m_selectedPosition.y() * m_board->cellHeight() ),
                             QColor( Qt::magenta ) );
+
+        // paranoid nullptr check
+        if ( m_board->isPiece( m_selectedPosition ) )
+        {
+            this->markAllowedMovements( painter, m_board->pieceAt( m_selectedPosition ) );
+        }
+        m_selectedPosition = Position( -1, -1 );
+//        qDebug() << "Selected position:" << m_selectedPosition.x() << m_selectedPosition.y();
     }
 
     //some lines that should be there but are not
@@ -126,4 +139,21 @@ void BoardInterface::setSelectedPosition( const Position& position )
 Position BoardInterface::selectedPosition() const
 {
     return m_selectedPosition;
+}
+
+void BoardInterface::markAllowedMovements( QPainter& painter, ChessPiece* chessPiece )
+{
+
+    vector< Position > helper = chessPiece->allowedMovements();
+    for ( auto iter = helper.begin(); iter != helper.end(); ++ iter )
+    {
+        int x = ( *iter ).x();
+        int y = ( *iter ).y();
+
+        if ( m_board->isValidPosition( *iter ) )
+        this->drawPosition( painter,
+                            Position( X_OFFSET + x * m_board->cellWidth(),
+                                      Y_OFFSET + y * m_board->cellHeight() ),
+                            QColor( Qt::yellow ) );
+    }
 }

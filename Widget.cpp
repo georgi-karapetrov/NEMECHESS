@@ -65,6 +65,4 @@ void Widget::movesListItemClicked(QModelIndex index)
 void Widget::figureSelectedListener( const Position& position )
 {
     m_interface.setSelectedPosition( position );
-    this->repaint();
-//    m_interface.setSelectedPosition( Position( -1, -1 ) );
 }

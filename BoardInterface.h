@@ -6,7 +6,7 @@
 #include <QImage>
 #include <QLabel>
 #include <QPainter>
-//#include <QWidget>
+#include <QDebug>
 #include <QPushButton>
 
 #include "Board.h"
@@ -26,7 +26,7 @@ public:
     static const QString EXT;
 
 public:
-    BoardInterface( Board* board  = 0 );
+    BoardInterface( Board* board = 0 );
 
     void drawBoard( QPainter& painter );
     void drawChessPiece( QPainter& painter, ChessPiece* chessPiece = 0 );
@@ -38,8 +38,10 @@ public:
 
 private:
     QColor alternateColour( const QColor& colour );
-    void drawPosition( QPainter& painter, const Position& position, const QColor& colour );
+    void drawPosition( QPainter& painter, const Position& position, const QColor& colour, bool bordered = true );
     void drawNotationRulers( QPainter& painter );
+
+    void markAllowedMovements( QPainter& painter, ChessPiece* chessPiece );
 
 private:
     Board*   m_board;

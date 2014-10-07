@@ -29,8 +29,8 @@ void King::checkAllowedMovements( const Position& position, vector < Position >&
          && !m_board->isAlly( position, m_colour ) )
     {
         if ( !m_board->isPiece( position )
-             || m_board->isPiece( position )
-             && m_board->pieceAt( position )->pieceType() != KING_TYPE )
+             || ( m_board->isPiece( position )
+             && m_board->pieceAt( position )->pieceType() != KING_TYPE ) )
         {
             aVector.push_back( position );
         }

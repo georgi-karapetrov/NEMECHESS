@@ -203,7 +203,7 @@ vector< ChessPiece* > Board::blackPieces() const
 }
 
 bool Board::placePieces( vector < ChessPiece* > pieces,
-                        unsigned int index )
+                         unsigned int index )
 {
     if ( index == pieces.size() )
     {
