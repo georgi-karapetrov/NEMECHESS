@@ -32,13 +32,14 @@ enum Error
     InvalidDestination,
     Check,
     KingCapture,
+    Castling,
     ReachedEnd
 };
 
 enum CastlingType
 {
-    Kingside,
-    Queenside
+    KINGSIDE_CASTLING,
+    QUEENSIDE_CASTLING
 };
 
 const int KSCASTLING_KING_X = 6;
@@ -62,12 +63,11 @@ public:
     PiecesManipulator( Board* board = 0 );
     ~PiecesManipulator();
 
-    void undo( bool isSilent = false );
-    void redo();
+    bool undo( bool isSilent = false );
+    bool redo();
 
     Error makeAMove( const Position& from, const Position& to , Colour colour );
 
-    bool isCastlingAllowed( ChessPiece* const king, ChessPiece* const rook, const CastlingType& type );
     bool castling( const Colour& colour, const CastlingType& type );
 
     void flushUndo();
@@ -80,6 +80,9 @@ public:
 
     void setRedoMoves( const QStack< Movement* >& movesStack );
     QStack< Movement* > redoMoves() const;
+
+private:
+    bool isCastlingAllowed( ChessPiece* const king, ChessPiece* const rook, const CastlingType& type );
 
 private:
     QStack< Movement* > m_undoMoves;

@@ -20,6 +20,8 @@ GameEngine::GameEngine( const int rows,
     m_widget = new Widget( 0 );
     m_model =  new MovesListModel( this );
 
+    m_model->addMove( "Game started" );
+
     connect( m_widget, SIGNAL(clickCell(QPoint)), this, SLOT(clickCellListener(QPoint)));
     connect( this, SIGNAL(jobFinished()), m_widget, SLOT(repaint()) );
     connect( m_widget->view(), SIGNAL(clicked(QModelIndex)), this, SLOT(lastMoveClickedListener(QModelIndex)) );
@@ -102,8 +104,6 @@ void GameEngine::run()
 //    this->setPiecesForTesting();
 }
 
-// TODO: intelligent marked square
-
 void GameEngine::clickCellListener( const QPoint& point )
 {
 
@@ -124,7 +124,6 @@ void GameEngine::clickCellListener( const QPoint& point )
 //    }
 
     this->chewCoordinates( point );
-//    qDebug() << "Vroom-vroom!";
     emit( jobFinished() );
 }
 
@@ -232,14 +231,14 @@ void GameEngine::parseInstructions( const string& instruction )
     case Pass:
         this->nextPlayersTurn();
         break;
-    case Castling:
+//    case Castling:
         if ( instruction == "0-0-0"
              || instruction == "o-o-o"
              || instruction == "O-O-O" )
         {
-           if ( !m_manipulator.castling( m_currentPlayerColour, Queenside ) )
+           if ( !m_manipulator.castling( m_currentPlayerColour, QUEENSIDE_CASTLING ) )
            {
-               cout << "Queenside castling isn't allowed under current circumstances!\n";
+               cout << "QUEENSIDE_CASTLING castling isn't allowed under current circumstances!\n";
                pressEnterToContinue();
            }
         }
@@ -247,9 +246,9 @@ void GameEngine::parseInstructions( const string& instruction )
                   || instruction == "o-o"
                   || instruction == "O-O" )
         {
-            if ( !m_manipulator.castling( m_currentPlayerColour, Kingside ) )
+            if ( !m_manipulator.castling( m_currentPlayerColour, KINGSIDE_CASTLING ) )
             {
-                cout << "Kingside castling isn't allowed under current circumstances!\n";
+                cout << "KINGSIDE_CASTLING castling isn't allowed under current circumstances!\n";
                 pressEnterToContinue();
             }
         }
@@ -299,7 +298,7 @@ Instruction GameEngine::instructionFromCode( const char& ch )
     case '0':
     case 'o':
     case 'O':
-        return Castling;
+//        return Castling;
     case 'f':
         return FastForward;
     }
@@ -336,7 +335,7 @@ Position GameEngine::toPosition( QPoint point )
                      floor( ( point.y() - BoardInterface::Y_OFFSET ) / m_board->cellHeight() ) );
 }
 
-QString GameEngine::toChessNotation( const Position& position )
+QString GameEngine::toChessNotation( /*const Movement& movement, */const Position& position )
 {
     //todo: move logic in model //can't and shouldn't
     return QString( 'a' + position.x() + QString::number( m_board->rows() - position.y() ) );
@@ -351,31 +350,25 @@ void GameEngine::chewCoordinates( const QPoint& point )
     {
         m_to = position;
 
-//        if ( currentPlayer.isInCheck() )
+//        if ( m_board->isPiece( m_to ) )
 //        {
-//            if ( !this->kingIsSafe( m_from, m_to, m_currentPlayerColour ) )
+//            if ( m_board->pieceAt( m_from )->pieceType() == KING_TYPE
+//                 && m_board->pieceAt( m_to )->pieceType() == ROOK_TYPE )
 //            {
-//                m_manipulator.undo( true );
+//                CastlingType castlingType = m_board->pieceAt( m_from )->position().x() < m_board->pieceAt( m_to )->position().x() ? KINGSIDE_CASTLING
+//                                                                                                                                  : QUEENSIDE_CASTLING;
+//               if ( m_manipulator.castling( m_currentPlayerColour, castlingType ) )
+//               {
+//                   this->nextPlayersTurn();
+//               }
 //            }
 //        }
-
 
         Error makeAMoveOutcome = m_manipulator.makeAMove( m_from,
                                                           m_to,
                                                           m_currentPlayerColour );
-//        bool safeKing = !( makeAMoveOutcome != Success
-//                           || makeAMoveOutcome == Success
-//                           && currentPlayer.isInCheck() );
 
-
-        //shouldn't be able to select if WrongColour
-
-//        if ( makeAMoveOutcome == WrongColour )
-//        {
-//            qDebug() << "These are not your figures!";
-//        }
-
-        if ( makeAMoveOutcome == Success )
+        if ( makeAMoveOutcome == Success || makeAMoveOutcome == Castling )
         {
             if ( currentPlayer.isInCheck() )
             {
@@ -389,7 +382,7 @@ void GameEngine::chewCoordinates( const QPoint& point )
                 m_manipulator.flushRedo();
                 m_model->clearRedoMoves();
             }
-
+            m_widget->view()->clearSelection();
             m_model->setLastRowClicked( m_model->rowCount() );
             m_model->addMove( this->toChessNotation( m_from ) + " -> " + this->toChessNotation( m_to ) );
 
@@ -419,25 +412,30 @@ void GameEngine::chewCoordinates( const QPoint& point )
 void GameEngine::lastMoveClickedListener( const QModelIndex& index )
 {
 
-    if ( index.row() <= m_model->lastRowClicked() && m_isFirstClick )
+    if ( index.row() < m_model->lastRowClicked() )//&& m_isFirstClick )
     {
-        for ( int i = index.row(); i <= m_model->lastRowClicked(); ++ i )
+        for ( int i = index.row(); i < m_model->lastRowClicked(); ++ i ) // '<' and '<='
         {
-            m_manipulator.undo();
+            if ( m_manipulator.undo() )
+            {
+                this->nextPlayersTurn();
+            }
         }
         m_isFirstClick = false;
     }
     else
     {
         m_isFirstClick = true;
-        for ( int i = m_model->lastRowClicked(); i <= index.row(); ++ i )
+        for ( int i = m_model->lastRowClicked(); i < index.row(); ++ i ) // '<' to '<='
         {
-            m_manipulator.redo();
+            if ( m_manipulator.redo() )
+            {
+                this->nextPlayersTurn();
+            }
         }
     }
     m_model->setLastRowClicked( index.row() );
     emit( jobFinished() );
-
 }
 
 void GameEngine::selectFigure( const Position& position )
@@ -448,95 +446,4 @@ void GameEngine::selectFigure( const Position& position )
     emit figureSelected( position );
 }
 
-//unused
-bool GameEngine::kingIsSafe( const Position& from, const Position& to, const Colour& colour )
-{
-    Player currentPlayer = m_currentPlayerColour == Chess::white ? PLAYER1 : PLAYER2;
-
-    Error outcome = m_manipulator.makeAMove( from, to, colour );
-
-    if ( outcome != Success
-         || ( outcome == Success
-         && currentPlayer.isInCheck() ) )
-    {
-        return false;
-    }
-
-    return true;
-}
-
-/*
-void GameEngine::chewCoordinates( const QPoint& point )
-{
-    Position position = toPosition( point );
-
-    if ( m_isFigureSelected )
-    {
-        m_to = position;
-        Player currentPlayer = m_currentPlayerColour == Chess::white ? PLAYER1 : PLAYER2;
-
-        if ( ! currentPlayer.isInCheck() )
-        {
-
-            Error makeAMoveOutcome = m_manipulator.makeAMove( m_from,
-                                                              m_to,
-                                                              m_board->pieceAt( m_from )->colour() );
-
-
-            if ( makeAMoveOutcome == Check )
-            {
-                m_inCheckFlag = true;
-            }
-            else if ( makeAMoveOutcome == Success )
-            {
-                m_inCheckFlag = false;
-                if ( !m_manipulator.redoMoves().isEmpty() )
-                {
-                    m_manipulator.flushRedo();
-                    m_model->clearRedoMoves();
-                }
-
-                m_model->setLastRowClicked( m_model->rowCount() );
-                m_model->addMove( this->toChessNotation( m_from ) + " -> " + this->toChessNotation( m_to ) );
-                this->nextPlayersTurn();
-            }
-
-            m_from = Position( -1, -1 );
-            m_to   = Position( -1, -1 );
-            m_isFigureSelected = false;
-        }
-        else if ( m_inCheckFlag ) //if ( !figureSelected )
-        {
-            if ( m_board->isPiece( position) && m_board->pieceAt( position )->pieceType() == KING_TYPE )
-            {
-                this->selectFigure( position );
-            }
-        }
-        else //not inCheck
-        {
-            this->selectFigure( position );
-        }
-    }
-    //qDebug() << position.x() << position.y();
-    qDebug() << "The position " << position.x() << position.y() << "is in LoS of the white pieces: " << m_board->inLoS( position, m_board->whitePieces() );
-}
-*/
-
-// deny movements if king is in chess
-/*
-        if ( currentPlayer.isInCheck() )
-        {
-//            if ( m_board->isPiece( position ) && m_board->pieceAt( position )->pieceType() == KING_TYPE )
-            {
-                this->selectFigure( position );
-            }
-//            else
-            {
-//                qDebug() << "This is not a king";
-            }
-        }
-        else // !inCheck
-        {
-            this->selectFigure( position );
-        }
-*/
+// TODO: Pawn promotion

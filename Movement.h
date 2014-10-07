@@ -3,8 +3,20 @@
 
 #include <vector>
 #include <unordered_map>
+#include <QString>
 
 namespace Chess{
+
+enum MovementFlagsEnum
+{
+    NO_FLAG        = 0,
+    CASTLING_FLAG  = 1,
+    CHECK_FLAG     = 2,
+    POWERMOVE_FLAG = 4
+};
+Q_DECLARE_FLAGS( MovementFlags, MovementFlagsEnum )
+Q_DECLARE_OPERATORS_FOR_FLAGS( MovementFlags )
+
 namespace ChessComponents {
 namespace PlayField {
     class Board;
@@ -31,6 +43,8 @@ public:
 
     virtual bool doMove() = 0;
     virtual bool undoMove() = 0;
+
+    virtual QString toChessNotation( MovementFlags flags = NO_FLAG ) = 0;
 
 protected:
     Board* m_board;

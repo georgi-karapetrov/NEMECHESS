@@ -86,3 +86,9 @@ Board* SimpleMovement::board() const
 {
     return m_board;
 }
+
+QString SimpleMovement::toChessNotation( MovementFlags flags )
+{
+    Q_UNUSED( flags )
+    return "Simple";
+}

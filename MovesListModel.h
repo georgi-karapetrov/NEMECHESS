@@ -5,7 +5,12 @@
 #include <QStringList>
 #include <QColor>
 #include <QDebug>
+#include <QStack>
+
+#include "Movement.h"
 #include "Position.h"
+
+using namespace Chess::GameLogic::Movements;
 
 class MovesListModel : public QAbstractListModel
 {
@@ -30,8 +35,10 @@ public:
     void clearRedoMoves();
 
 private:
-    QStringList m_list;
-    int         m_lastRowClicked;
+    QStringList          m_list;      // #I am full of brilliant ideas
+    QStack< Movement* >* m_someStack; // polymerization between the undo and redo stacks
+    int                  m_lastRowClicked;
 };
 
 #endif // MOVESLISTMODEL_H
+

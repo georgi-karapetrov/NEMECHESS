@@ -16,16 +16,18 @@ class ComplexMovement : public Movement
 public:
     ComplexMovement( Board* const board,
                      const vector< Movement* >& moves );
-    ~ComplexMovement();
+    virtual ~ComplexMovement();
 
-    bool doMove();
-    bool undoMove();
+    virtual bool doMove();
+    virtual bool undoMove();
+
+    virtual QString toChessNotation( MovementFlags flags = NO_FLAG );
 
     void pushMove( Movement* move );
     Movement* popMove();
 
 private:
-    vector< Movement* > m_undoMoves;
+    vector< Movement* > m_movesHeap;
 };
 
 }

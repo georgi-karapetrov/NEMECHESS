@@ -37,6 +37,21 @@ Error PiecesManipulator::makeAMove( const Position& from, const Position& to, Co
         return KingCapture;
     }
 
+    if ( m_board->isPiece( to ) )
+    {
+        if ( m_board->pieceAt( from )->pieceType()  == KING_TYPE
+             && m_board->pieceAt( to )->pieceType() == ROOK_TYPE
+             && m_board->pieceAt( from )->colour()  == m_board->pieceAt( to )->colour() )
+        {
+            CastlingType castlingType = m_board->pieceAt( from )->position().x() < m_board->pieceAt( to )->position().x() ? KINGSIDE_CASTLING
+                                                                                                                          : QUEENSIDE_CASTLING;
+           if ( this->castling( m_board->pieceAt( from )->colour(), castlingType ) )
+           {
+               return Castling;
+           }
+        }
+    }
+
 //    if ( this->kingInCheck( colour ) )// && m_board->pieceAt( from )->pieceType() != KING_TYPE )
 //    {
 //        qDebug() << "Your king's in trouble!";
@@ -61,9 +76,9 @@ Error PiecesManipulator::makeAMove( const Position& from, const Position& to, Co
     return Success;
 }
 
-void PiecesManipulator::undo( bool isSilent )
+bool PiecesManipulator::undo( bool isSilent )
 {
-    if ( !m_undoMoves.empty() )
+    if ( ! m_undoMoves.empty() )
     {
         m_undoMoves.top()->undoMove();
         if ( ! isSilent )
@@ -71,7 +86,9 @@ void PiecesManipulator::undo( bool isSilent )
             m_redoMoves.push( m_undoMoves.top() );
             m_undoMoves.pop();
         }
+        return true;
     }
+    return false;
 }
 
 void PiecesManipulator::flushUndo()
@@ -85,14 +102,16 @@ void PiecesManipulator::flushUndo()
 }
 
 
-void PiecesManipulator::redo()
+bool PiecesManipulator::redo()
 {
     if ( !m_redoMoves.empty() )
     {
         m_redoMoves.top()->doMove();
         m_undoMoves.push( m_redoMoves.top() );
         m_redoMoves.pop();
+        return true;
     }
+    return false;
 }
 
 void PiecesManipulator::flushRedo()
@@ -109,14 +128,16 @@ bool PiecesManipulator::castling( const Colour& colour, const CastlingType& type
     int castlingOffsetKing = 0;
     int castlingOffsetRook = 0;
 
-    ChessPiece* king = colour == white ? m_board->pieceAt( WHITE_KING_POSITION ) : m_board->pieceAt( BLACK_KING_POSITION );
+    Position kingPosition = colour == Chess::white ? WHITE_KING_POSITION : BLACK_KING_POSITION;
 
-    Position rookPosition = colour == white ? type == Kingside ? WHITE_K_ROOK_POSITION : WHITE_Q_ROOK_POSITION
-                                            : type == Kingside ? BLACK_K_ROOK_POSITION : BLACK_Q_ROOK_POSITION;
+    ChessPiece* king = m_board->pieceAt( kingPosition );
+
+    Position rookPosition = colour == Chess::white ? type == KINGSIDE_CASTLING ? WHITE_K_ROOK_POSITION : WHITE_Q_ROOK_POSITION
+                                            : type == KINGSIDE_CASTLING ? BLACK_K_ROOK_POSITION : BLACK_Q_ROOK_POSITION;
     ChessPiece* rook = m_board->pieceAt( rookPosition );
 
-    if ( !m_board->isPiece( WHITE_KING_POSITION )
-         || !m_board->isPiece( rookPosition ) )
+    if ( ! m_board->isPiece( kingPosition )
+         || ! m_board->isPiece( rookPosition ) )
     {
         return false;
     }
@@ -126,13 +147,13 @@ bool PiecesManipulator::castling( const Colour& colour, const CastlingType& type
         return false;
     }
 
-    if ( ! isCastlingAllowed( king, rook, type ) )
+    if ( ! this->isCastlingAllowed( king, rook, type ) )
     {
         return false;
     }
 
 
-    if ( type == Kingside )
+    if ( type == KINGSIDE_CASTLING )
     {
         castlingOffsetKing = KSCASTLING_KING_X;
         castlingOffsetRook = KSCASTLING_ROOK_X;
@@ -148,10 +169,12 @@ bool PiecesManipulator::castling( const Colour& colour, const CastlingType& type
     //resulting in crashing undo
     Movement* kingMovement = new SimpleMovement( king->position(),
                                                  Position( castlingOffsetKing,
-                                                           king->position().y() ), m_board );
+                                                           king->position().y() ),
+                                                 m_board );
     Movement* rookMovement = new SimpleMovement( rook->position(),
                                                  Position( castlingOffsetRook,
-                                                           rook->position().y() ), m_board );
+                                                           rook->position().y() ),
+                                                 m_board );
     vector < Movement* > simpleMovements;
 
     simpleMovements.push_back( rookMovement );
@@ -179,7 +202,7 @@ bool PiecesManipulator::isCastlingAllowed( ChessPiece* const king, ChessPiece* c
     Colour colour = king->colour();
     const vector< ChessPiece* >& enemyPieces = colour == white ? m_board->blackPieces() : m_board->whitePieces();
 
-    if ( type == Kingside )
+    if ( type == KINGSIDE_CASTLING )
     {
         for ( int i = king->position().x() + 1; i <= KSCASTLING_KING_X; ++ i )
         {
@@ -192,7 +215,7 @@ bool PiecesManipulator::isCastlingAllowed( ChessPiece* const king, ChessPiece* c
             }
         }
     }
-    else // if type == Queenside
+    else // if type == QUEENSIDE_CASTLING
     {
         for ( int i = king->position().x() - 1; i >= QSCASTLING_KING_X; -- i )
         {

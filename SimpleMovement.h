@@ -26,10 +26,12 @@ public:
     SimpleMovement( const Position& from = Position( 0, 0 ),
                     const Position& to   = Position( 0, 1 ),
                     Board* const   board = 0 );
-    ~SimpleMovement();
+    virtual ~SimpleMovement();
 
-    bool doMove();
-    bool undoMove();
+    virtual bool doMove();
+    virtual bool undoMove();
+
+    virtual QString toChessNotation( MovementFlags flags  = NO_FLAG );
 
     void setFrom( const Position& from );
     Position from() const;

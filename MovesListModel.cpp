@@ -20,7 +20,6 @@ int MovesListModel::rowCount( const QModelIndex& parent ) const
 
 bool MovesListModel::setData( const QModelIndex& index, const QVariant& value, int role )
 {
-//    qDebug() << "setData()";
     if ( index.isValid() && role == Qt::EditRole )
     {
         m_list.insert( index.row(), value.toString() );
@@ -33,7 +32,6 @@ bool MovesListModel::setData( const QModelIndex& index, const QVariant& value, i
 
 QVariant MovesListModel::data( const QModelIndex& index, int role ) const
 {
-//    qDebug() << "data()";
     if ( !index.isValid() )
     {
         return QVariant();
@@ -62,15 +60,9 @@ QVariant MovesListModel::data( const QModelIndex& index, int role ) const
     return QVariant();
 }
 
-//QString MovesListModel::toChessNotation( const Position& position )
-//{
-//    return QString( 'a' + position.x() + QString::number( m_board->rows() - position.y() ) );
-//}
-
 void MovesListModel::addMove( const QString& move )
 {
     QModelIndex index = createIndex( 0, 0 );
-//    QString move( toChessNotation( from ) + " -> " + toChessNotation( to ) );
     m_list << move;
 
     emit( dataChanged( index, index ) );
@@ -101,9 +93,10 @@ int MovesListModel::lastRowClicked() const
 void MovesListModel::clearRedoMoves()
 {
     auto iter = m_list.begin();
-    for ( int i = 0; i < m_lastRowClicked; ++ i )
+    ++ iter; // something important going on here; gotta work it out
+    for ( int i = 0; i < m_lastRowClicked - 1; ++ i )
     {
         ++ iter;
     }
-    m_list.erase( iter, m_list.end() );
+    m_list.erase( iter, --m_list.end() );
 }

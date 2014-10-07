@@ -6,14 +6,14 @@ ComplexMovement::ComplexMovement( Board* const board = 0,
                                   const vector< Movement* >& moves = vector< Movement* >() )//I hope this is  an empty vector,
                                                                                     //doesn't work the Gope way
     : Movement( board ),
-      m_undoMoves( moves )
+      m_movesHeap( moves )
 {
 }
 
 ComplexMovement::~ComplexMovement()
 {
     cout << "~ComplexMovement()\n";
-    for ( auto iter = m_undoMoves.begin(); iter != m_undoMoves.end(); ++ iter )
+    for ( auto iter = m_movesHeap.begin(); iter != m_movesHeap.end(); ++ iter )
     {
         delete *iter;
     }
@@ -21,7 +21,7 @@ ComplexMovement::~ComplexMovement()
 
 bool ComplexMovement::doMove()
 {
-    for ( auto i = m_undoMoves.begin(); i != m_undoMoves.end(); ++ i )
+    for ( auto i = m_movesHeap.begin(); i != m_movesHeap.end(); ++ i )
     {
         ( *i )->doMove();
     }
@@ -30,22 +30,29 @@ bool ComplexMovement::doMove()
 
 bool ComplexMovement::undoMove()
 {
-    for ( int i = m_undoMoves.size() - 1; i >= 0 ; -- i )
+    for ( int i = m_movesHeap.size() - 1; i >= 0 ; -- i )
     {
-       m_undoMoves[ i ]->undoMove();
-       delete m_undoMoves[ i ];
+       m_movesHeap[ i ]->undoMove();
+       delete m_movesHeap[ i ];
     }
     return true;
 }
 
 void ComplexMovement::pushMove( Movement* move )
 {
-    m_undoMoves.push_back( move );
+    m_movesHeap.push_back( move );
 }
 
 Movement* ComplexMovement::popMove()
 {
-    Movement* tmp = m_undoMoves.back();
-    m_undoMoves.pop_back();
+    Movement* tmp = m_movesHeap.back();
+    m_movesHeap.pop_back();
     return tmp;
+}
+
+QString ComplexMovement::toChessNotation( MovementFlags flags )
+{
+    Q_UNUSED( flags )
+
+    return "Complex";
 }

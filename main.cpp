@@ -14,6 +14,23 @@ int main( int argc, char* argv[] )
     GameEngine engine;
     engine.run();
 
+    MovementFlags flag = POWERMOVE_FLAG | CASTLING_FLAG;
+
+    switch ( flag )
+    {
+    case POWERMOVE_FLAG:
+        qDebug() << "Power move";
+        break;
+    case CASTLING_FLAG:
+        qDebug() << "Castling";
+        break;
+    case POWERMOVE_FLAG | CASTLING_FLAG:
+        qDebug() << "Power castling";
+        break;
+    case CHECK_FLAG:
+        qDebug() << "Check";
+    }
+
     return a.exec();
 }
 

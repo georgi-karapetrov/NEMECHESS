@@ -6,7 +6,7 @@ Widget::Widget( QWidget* parent )
     qDebug() << "Widget()";
     m_view = new QListView( this );
 
-    connect(m_view, SIGNAL(clicked(QModelIndex)), this, SLOT(movesListItemClicked(QModelIndex)));
+    connect( m_view, SIGNAL(clicked(QModelIndex)), this, SLOT(movesListItemClicked(QModelIndex)) );
 }
 
 Widget::~Widget()

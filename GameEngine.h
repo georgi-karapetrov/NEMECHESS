@@ -53,7 +53,7 @@ enum Instruction
     Undo,
     Redo,
     Pass,
-    Castling,
+//    Castling,
     FastForward,
     Invalid
 };
@@ -106,8 +106,6 @@ private:
     Position toPosition( QPoint point );
     void addMoveToList( Movement* move );
     void selectFigure( const Position& position );
-
-    bool kingIsSafe( const Position& from, const Position& to, const Colour& colour );
 
 signals:
     void jobFinished();
