@@ -53,7 +53,7 @@ QVariant MovesListModel::data( const QModelIndex& index, int role ) const
             if ( m_movesVector.at( index.row() ) != 0 )
               return m_movesVector.at( index.row() )->toChessNotation();
         }
-//        qDebug() << "Size of the vector:" << m_movesVector.size();
+//        qDebug() << "Size of the QVector:" << m_movesVector.size();
         return QVariant();
 
     case Qt::TextColorRole:

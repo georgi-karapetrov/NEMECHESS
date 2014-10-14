@@ -3,8 +3,8 @@
 using namespace Chess::GameLogic::Movements;
 
 ComplexMovement::ComplexMovement( Board* const board = 0,
-                                  const vector< Movement* >& moves = vector< Movement* >(),
-                                  MovementFlags flags)//I hope this is  an empty vector,
+                                  const QVector< Movement* >& moves = QVector< Movement* >(),
+                                  MovementFlags flags)//I hope this is  an empty QVector,
                                                                                     //doesn't work the Gope way
     : Movement( board, flags ),
       m_movesHeap( moves )

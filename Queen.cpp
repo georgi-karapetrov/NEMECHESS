@@ -28,21 +28,22 @@ bool Queen::takes( const Position& position )
              m_bishop->takes( position ) );
 }
 
-vector<Position> Queen::allowedMovements()
+QVector<Position> Queen::allowedMovements()
 {
     //a genuine tryhard queen to pair up with the coward king
     //still the better version of him, this two-faced bitch has problems with obstacles,
     //as well as a few underage pregnancies and appearances on MTV's Sixteen and Pregnant.
     //what a surprise
 
-    vector< Position > tmp;
-    vector< Position > tmpBishop;
+    QVector< Position > tmp;
+    QVector< Position > tmpBishop;
 
     tmp = m_rook->allowedMovements();
     tmpBishop = m_bishop->allowedMovements();
 
     tmp.reserve( tmp.size() + tmpBishop.size() );
-    tmp.insert( tmp.end(), tmpBishop.begin(), tmpBishop.end() );
+    tmp += tmpBishop;
+//    tmp.( tmp.end(), tmpBishop.begin(), tmpBishop.end() );
 
     return tmp;
 }

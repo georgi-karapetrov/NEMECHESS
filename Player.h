@@ -4,7 +4,7 @@
 #include "ChessPiece.h"
 #include "PiecesManipulator.h"
 
-#include <string>
+#include <QSet>
 
 namespace Chess{
 namespace ChessComponents {

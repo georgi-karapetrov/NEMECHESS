@@ -24,8 +24,7 @@ bool SimpleMovement::doMove()
 //        m_capturedPieces.push_back( m_board->pieceAt( m_to ) );
 //    }
 
-    const bool isPieceMoved = m_board->movePiece( m_from, m_to );
-
+    const bool isPieceMoved = m_board->movePiece( m_from, m_to ); 
     if ( isPieceMoved )
     {
         ChessPiece* piece = m_board->pieceAt( m_to );

@@ -1,7 +1,7 @@
 #ifndef KNIGHT_H
 #define KNIGHT_H
 
-#include <vector>
+#include <QVector>
 #include "ChessPiece.h"
 
 namespace Chess{
@@ -15,12 +15,12 @@ public:
     ~Knight();
 
     bool takes( const Position& position );
-    virtual vector< Position > allowedMovements();
+    virtual QVector< Position > allowedMovements();
 
     ChessPieceType pieceType();
 
 private:
-    void checkAllowedMovements ( const Position& position, vector< Position >& aVector );
+    void checkAllowedMovements ( const Position& position, QVector< Position >& aVector );
 };
 
 }

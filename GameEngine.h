@@ -7,7 +7,7 @@
 
 #include <QObject>
 #include <string>
-#include <vector>
+#include <QVector>
 #include <QDebug>
 
 #include "BoardInterface.h"
@@ -104,18 +104,20 @@ private:
     void addMoveToList( Movement* move );
     void selectFigure( const Position& position );
 
+    void disposeOfPieceVectors();
+
 signals:
     void jobFinished();
     void figureSelected( const Position& position );
 
 public slots:
     void clickCellListener( const QPoint& point );
-    void lastMoveClickedListener( const QModelIndex& index );
+    void onMovesViewClicked( const QModelIndex& index );
 
 private:
     Board*                 m_board;
     PiecesManipulator      m_manipulator;
-    vector< Player* >      m_players;
+    QVector< Player* >      m_players;
     Colour                 m_currentPlayerColour;
     bool                   m_quit;
     Position               m_from;

@@ -27,7 +27,7 @@ bool Knight::takes( const Position& position )
              ( abs( m_position.y() - position.y() ) == 1 ) ) );
 }
 
-void Knight::checkAllowedMovements ( const Position& position, vector< Position >& aVector )
+void Knight::checkAllowedMovements ( const Position& position, QVector< Position >& aVector )
 {
     //no one is a match for the righteous knight
     //petty obstacles cannot prevent him from jumping to his death
@@ -41,9 +41,9 @@ void Knight::checkAllowedMovements ( const Position& position, vector< Position 
     }
 }
 
-vector< Position > Knight::allowedMovements()
+QVector< Position > Knight::allowedMovements()
 {
-    vector< Position > tmp;
+    QVector< Position > tmp;
 
     checkAllowedMovements( Position( m_position.x() - 2, m_position.y() - 1 ), tmp );
     checkAllowedMovements( Position( m_position.x() - 2, m_position.y() + 1 ), tmp );

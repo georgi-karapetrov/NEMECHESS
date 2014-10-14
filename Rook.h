@@ -3,7 +3,7 @@
 
 #include "ChessPiece.h"
 
-#include <vector>
+#include <QVector>
 
 
 namespace Chess{
@@ -21,7 +21,7 @@ public:
     ~Rook();
 
     bool takes( const Position& position );
-    virtual vector< Position > allowedMovements();
+    virtual QVector< Position > allowedMovements();
 
     ChessPieceType pieceType();
 };

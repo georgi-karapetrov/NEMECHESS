@@ -60,7 +60,7 @@ Error PiecesManipulator::makeAMove( const Position& from, const Position& to, Co
 //    }
 
     //if the figure attempts m_capturedPiecesto move in its allowed movements
-    vector< Position > tmp = m_board->pieceAt( from )->allowedMovements();
+    QVector< Position > tmp = m_board->pieceAt( from )->allowedMovements();
     if ( std::find( tmp.begin(), tmp.end(), to ) == tmp.end() )
     {
         return InvalidDestination;
@@ -86,6 +86,7 @@ Error PiecesManipulator::makeAMove( const Position& from, const Position& to, Co
         {
             movement->setFlags( CAPTURE_FLAG );
             m_capturedPieces.push( forCapture );
+            movement->setCapturedPiece( forCapture );
         }
         m_undoMoves->push( movement );
         return Success;
@@ -113,6 +114,8 @@ bool PiecesManipulator::undo( bool isSilent )
             m_board->addPiece( m_capturedPieces.pop() );
         }
 
+        // ohterStack.addPiece()
+
         if ( ! isSilent )
         {
             m_redoMoves->push( topMovement );
@@ -139,7 +142,15 @@ bool PiecesManipulator::redo()
 {
     if ( !m_redoMoves->empty() )
     {
-        m_redoMoves->top()->doMove();
+        Movement* const movement = m_redoMoves->top();
+        movement->doMove();
+
+        if ( movement->capturedPiece() != 0 )
+        {
+            m_capturedPieces.push( movement->capturedPiece() );
+//            m_board->addPiece( movement->capturedPiece() );
+//            movement->setCapturedPiece( 0 );
+        }
         m_undoMoves->push( m_redoMoves->top() );
         m_redoMoves->pop();
         return true;
@@ -208,7 +219,7 @@ bool PiecesManipulator::castling( const Colour& colour, const CastlingType& type
                                                  Position( castlingOffsetRook,
                                                            rook->position().y() ),
                                                  m_board );
-    vector < Movement* > simpleMovements;
+    QVector < Movement* > simpleMovements;
 
     simpleMovements.push_back( rookMovement );
     simpleMovements.push_back( kingMovement );
@@ -233,7 +244,7 @@ bool PiecesManipulator::isCastlingAllowed( ChessPiece* const king, ChessPiece* c
     }
 
     Colour colour = king->colour();
-    const vector< ChessPiece* >& enemyPieces = colour == white ? m_board->blackPieces() : m_board->whitePieces();
+    const QVector< ChessPiece* >& enemyPieces = colour == white ? m_board->blackPieces() : m_board->whitePieces();
 
     if ( type == KINGSIDE_CASTLING )
     {
@@ -291,8 +302,8 @@ QString spitPieceType( ChessPiece* piece )
 
 bool PiecesManipulator::kingInCheck( const Colour& kingColour )
 {
-    const vector< ChessPiece* >& tempPieces  = kingColour == white ? m_board->whitePieces() : m_board->blackPieces();
-    const vector< ChessPiece* >& enemyPieces = kingColour == white ? m_board->blackPieces() : m_board->whitePieces();
+    const QVector< ChessPiece* >& tempPieces  = kingColour == white ? m_board->whitePieces() : m_board->blackPieces();
+    const QVector< ChessPiece* >& enemyPieces = kingColour == white ? m_board->blackPieces() : m_board->whitePieces();
 
     bool inCheck = false;
     for ( auto iter = tempPieces.begin(); iter != tempPieces.end(); ++ iter )

@@ -3,7 +3,7 @@
 
 #include "ChessPiece.h"
 //#include <iostream>
-#include <vector>
+#include <QVector>
 #include <unordered_map>
 
 namespace Chess{
@@ -44,7 +44,7 @@ public:
     void addPiece( ChessPiece* piece );
     bool movePiece( const Position& from, const Position& to );
 
-    bool placePieces( vector < ChessPiece* > pieces,
+    bool placePieces( QVector < ChessPiece* > pieces,
                       unsigned int it );
 
     bool isValidPosition( const Position& position ) const;
@@ -55,7 +55,7 @@ public:
 
     Position nextPosition( const Position& position );
     bool isThreat( ChessPiece* piece );
-    bool inLoS( const Position& position, vector< ChessPiece* > aVector ) const;
+    bool inLoS( const Position& position, QVector< ChessPiece* > aVector ) const;
 
     bool isPiece( const Position& position ) const;
     bool isAlly( const Position& position, const Colour& colour ) const;
@@ -65,11 +65,11 @@ public:
     void setPassedMoves(ChessPiece* piece , int anInteger );
     int passedMoves( ChessPiece* piece ) const;
 
-    void setWhitePieces( vector< ChessPiece* > pieces );
-    vector< ChessPiece* > whitePieces() const;
+    void setWhitePieces( QVector< ChessPiece* > pieces );
+    QVector< ChessPiece* > whitePieces() const;
 
-    void setBlackPieces( vector< ChessPiece* > pieces );
-    vector< ChessPiece* > blackPieces() const;
+    void setBlackPieces( QVector< ChessPiece* > pieces );
+    QVector< ChessPiece* > blackPieces() const;
 
 
 private:
@@ -85,8 +85,8 @@ private:
     int m_cellWidth;
     int m_cellHeight;
 
-    vector< ChessPiece* > m_whitePieces;
-    vector< ChessPiece* > m_blackPieces;
+    QVector< ChessPiece* > m_whitePieces;
+    QVector< ChessPiece* > m_blackPieces;
     unordered_map< Position, ChessPiece* > m_piecesMap;
 };
 

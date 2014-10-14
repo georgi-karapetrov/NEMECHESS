@@ -144,7 +144,7 @@ Position BoardInterface::selectedPosition() const
 void BoardInterface::markAllowedMovements( QPainter& painter, ChessPiece* chessPiece )
 {
 
-    vector< Position > helper = chessPiece->allowedMovements();
+    QVector< Position > helper = chessPiece->allowedMovements();
     for ( auto iter = helper.begin(); iter != helper.end(); ++ iter )
     {
         int x = ( *iter ).x();

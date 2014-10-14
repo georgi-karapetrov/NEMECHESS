@@ -3,7 +3,7 @@
 
 #include "Movement.h"
 #include "SimpleMovement.h"
-#include <vector>
+#include <QVector>
 
 namespace Chess{
 namespace GameLogic{
@@ -15,7 +15,7 @@ class ComplexMovement : public Movement
 {
 public:
     ComplexMovement( Board* const board,
-                     const vector< Movement* >& moves,
+                     const QVector< Movement* >& moves,
                      MovementFlags flags = KINGSIDECASTLING_FLAG );
     virtual ~ComplexMovement();
 
@@ -28,7 +28,7 @@ public:
     Movement* popMove();
 
 private:
-    vector< Movement* > m_movesHeap;
+    QVector< Movement* > m_movesHeap;
 };
 
 }

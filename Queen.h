@@ -1,7 +1,7 @@
 #ifndef QUEEN_H
 #define QUEEN_H
 
-#include <vector>
+#include <QVector>
 #include "ChessPiece.h"
 #include "Position.h"
 #include "Rook.h"
@@ -22,7 +22,7 @@ public:
     ~Queen();
 
     bool takes( const Position& position );
-    virtual vector< Position > allowedMovements();
+    virtual QVector< Position > allowedMovements();
 
     void setPosition( const Position& position );
 

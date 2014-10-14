@@ -1,7 +1,7 @@
 #ifndef MOVEMENT_H
 #define MOVEMENT_H
 
-#include <vector>
+#include <QVector>
 #include <unordered_map>
 #include <QString>
 
@@ -52,9 +52,13 @@ public:
     void setFlags( const MovementFlags& flags );
     MovementFlags flags() const;
 
+    void setCapturedPiece( ChessPiece* chessPiece );
+    ChessPiece* capturedPiece() const;
+
 protected:
     Board* m_board;
     Chess::MovementFlags m_flags;
+    ChessPiece* m_capturedPiece;
 
 };
 

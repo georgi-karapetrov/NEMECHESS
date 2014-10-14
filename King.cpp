@@ -21,7 +21,7 @@ bool King::takes( const Position& position )
              abs( m_position.y() - position.y() ) <= 1 );
 }
 
-void King::checkAllowedMovements( const Position& position, vector < Position >& aVector )
+void King::checkAllowedMovements( const Position& position, QVector < Position >& aVector )
 {
     //a false king, proven unworthy in war... he is limp, he is blind, but at least he is immortal. And French.
     //again being obstructed is a big deal
@@ -62,9 +62,9 @@ bool King::inCheck()
     return false;
 }
 
-vector< Position > King::allowedMovements()
+QVector< Position > King::allowedMovements()
 {
-    vector< Position > tmp;
+    QVector< Position > tmp;
 
     checkAllowedMovements( Position( m_position.x() - 1, m_position.y() - 1 ), tmp );
     checkAllowedMovements( Position( m_position.x()    , m_position.y() - 1 ), tmp );

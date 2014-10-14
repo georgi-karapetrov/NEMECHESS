@@ -32,7 +32,7 @@ GameEngine::GameEngine( const int rows,
 
     connect( m_widget, SIGNAL(clickCell(QPoint)), this, SLOT(clickCellListener(QPoint)));
     connect( this, SIGNAL(jobFinished()), m_widget, SLOT(repaint()) );
-    connect( m_widget->view(), SIGNAL(clicked(QModelIndex)), this, SLOT(lastMoveClickedListener(QModelIndex)) );
+    connect( m_widget->view(), SIGNAL(clicked(QModelIndex)), this, SLOT(onMovesViewClicked(QModelIndex)) );
     connect( this, SIGNAL(figureSelected(Position)), m_widget, SLOT(figureSelectedListener(Position)) );
 
     qDebug() << "All slots connected";
@@ -74,6 +74,7 @@ GameEngine::~GameEngine()
 
 void GameEngine::destroy()
 {
+    //this->disposeOfPieceVectors();
     delete m_board;
 }
 
@@ -408,7 +409,7 @@ void GameEngine::chewCoordinates( const QPoint& point )
     }
 }
 
-void GameEngine::lastMoveClickedListener( const QModelIndex& index )
+void GameEngine::onMovesViewClicked( const QModelIndex& index )
 {
     if ( index.row() < m_model->lastRowClicked() )
     {
@@ -442,6 +443,11 @@ void GameEngine::selectFigure( const Position& position )
     m_isFigureSelected = true;
     qDebug() << "Position taken as:" << position.x() << position.y();
     emit figureSelected( position );
+}
+
+void GameEngine::disposeOfPieceVectors()
+{
+
 }
 
 // TODO: Pawn promotion

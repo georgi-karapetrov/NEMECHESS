@@ -2,7 +2,7 @@
 #define PAWN_H
 
 #include <cmath>
-#include <vector>
+#include <QVector>
 #include "ChessPiece.h"
 #include "Board.h"
 
@@ -18,7 +18,7 @@ public:
     ~Pawn();
 
     bool takes( const Position& position );
-    virtual vector< Position > allowedMovements();
+    virtual QVector< Position > allowedMovements();
 
     void setInitialPosition( const Position& position );
     Position initialPosition() const;

@@ -5,7 +5,7 @@
 
 #include <algorithm>
 #include <QStack>
-#include <vector>
+#include <QVector>
 
 namespace Chess{
 
@@ -23,7 +23,6 @@ namespace PlayField {
 
 namespace ChessPieces {
 
-using std::vector;
 using std::unordered_map;
 //using std::QStack;
 
@@ -57,7 +56,7 @@ public:
     Position position() const;
 
     virtual bool takes( const Position& position ) = 0;
-    virtual vector< Position > allowedMovements() = 0;
+    virtual QVector< Position > allowedMovements() = 0;
 
     void setColour( const Colour& colour );
     Colour colour() const;

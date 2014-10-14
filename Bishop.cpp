@@ -21,9 +21,9 @@ bool Bishop::takes( const Position& position )
           position.x() - m_position.x() == position.y() - m_position.y();
 }
 
-vector<Position> Bishop::allowedMovements()
+QVector<Position> Bishop::allowedMovements()
 {
-    vector< Position > tmp;
+    QVector< Position > tmp;
     int i = 1;
 
     //these bishops' religion prohibits them from moving over obstacles

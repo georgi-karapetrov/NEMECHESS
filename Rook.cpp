@@ -22,7 +22,7 @@ bool Rook::takes( const Position& position )
                   ^ ( position.y() == m_position.y() ) );
 }
 
-vector< Position > Rook::allowedMovements()
+QVector< Position > Rook::allowedMovements()
 {
     //this is what I call cannon power...
     //although a usual cannon would blast through several enemies
@@ -30,7 +30,7 @@ vector< Position > Rook::allowedMovements()
 
     //but it flies!!1
 
-    vector< Position > tmp;
+    QVector< Position > tmp;
     int x;
     int y;
 

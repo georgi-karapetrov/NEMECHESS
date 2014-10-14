@@ -42,40 +42,34 @@ bool Player::playsWith( const Colour& colour )
 
 bool Player::isInCheck() const
 {
-    const vector< ChessPiece* > currentPlayerPieces  = m_colour == white ? m_board->whitePieces() : m_board->blackPieces();
-    const vector< ChessPiece* > allEnemyPieces = m_colour == white ? m_board->blackPieces() : m_board->whitePieces();
+    const QVector< ChessPiece* > currentPlayerPieces  = m_colour == white ? m_board->whitePieces() : m_board->blackPieces();
+    const QVector< ChessPiece* > allEnemyPieces = m_colour == white ? m_board->blackPieces() : m_board->whitePieces();
 
     // LIFE IS PAIN, House M.D.
 
-    std::set<ChessPiece* > filteredEnemyPiecesSet;
-    std::set< ChessPiece* > allEnemyPiecesSet( allEnemyPieces.begin(), allEnemyPieces.end() );
+    QSet< ChessPiece* > filteredEnemyPiecesSet;
+    QSet< ChessPiece* > allEnemyPiecesSet = QSet< ChessPiece* >::fromList( allEnemyPieces.toList() );
     auto captured =  m_manipulator->capturedPieces();
+
     if ( captured.isEmpty() )
     {
         filteredEnemyPiecesSet = allEnemyPiecesSet;
     }
     else
     {
-        auto capturedVector = captured.toStdVector();
-        std::set< ChessPiece* > capturedEnemyPiecesSet( capturedVector.begin(), capturedVector.end() );
-
-        std::set_difference( allEnemyPiecesSet.begin(),
-                             allEnemyPiecesSet.end(),
-                             capturedEnemyPiecesSet.begin(),
-                             capturedEnemyPiecesSet.end(),
-                             std::inserter(filteredEnemyPiecesSet, filteredEnemyPiecesSet.end()));
+        QSet< ChessPiece* > capturedEnemyPiecesSet = QSet< ChessPiece* >::fromList( captured.toList() );
+        filteredEnemyPiecesSet = allEnemyPiecesSet - capturedEnemyPiecesSet;
     }
 
-//    const vector< ChessPiece* > filteredEnemyPieces = std::set< ChessPiece* > );
+//    const QVector< ChessPiece* > filteredEnemyPieces = std::set< ChessPiece* > );
 
-   // m_manipulator
     bool inCheck = false;
     for ( auto iter = currentPlayerPieces.begin(); iter != currentPlayerPieces.end(); ++ iter )
     {
         if ( ( *iter )->pieceType() == KING_TYPE )
         {
             ChessPiece* falseKing = *iter;
-            inCheck = m_board->inLoS( falseKing->position(), vector< ChessPiece* >( filteredEnemyPiecesSet.begin(), filteredEnemyPiecesSet.end() ) );
+            inCheck = m_board->inLoS( falseKing->position(), QVector< ChessPiece* >::fromList( filteredEnemyPiecesSet.toList() ) );
             break;
         }
     }

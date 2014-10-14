@@ -24,9 +24,9 @@ bool Pawn::takes( const Position& position )
                  && ( m_position.y() - position.y() == offset ) );
 }
 
-vector< Position > Pawn::allowedMovements()
+QVector< Position > Pawn::allowedMovements()
 {
-    vector< Position > tmp;
+    QVector< Position > tmp;
 
     const int offset = m_colour == white ? -1 : +1;
 

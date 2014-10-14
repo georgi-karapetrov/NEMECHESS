@@ -2,7 +2,7 @@
 #define KING_H
 
 #include <cmath>
-#include <vector>
+#include <QVector>
 
 #include "ChessPiece.h"
 #include "Queen.h"
@@ -20,12 +20,12 @@ public:
     ~King();
 
     bool takes( const Position& position );
-    virtual vector< Position > allowedMovements();
+    virtual QVector< Position > allowedMovements();
 
     ChessPieceType pieceType();
 
 private:
-    void checkAllowedMovements( const Position& position, vector< Position >& aVector );
+    void checkAllowedMovements( const Position& position, QVector< Position >& aVector );
     bool inCheck();
 };
 

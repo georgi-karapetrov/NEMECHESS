@@ -18,8 +18,7 @@ Board::Board( const int rows,
 Board::~Board()
 {
     cout << "~Board()\n";
-    m_undoMovesCountMap.clear();
-    m_piecesMap.clear();
+
     for ( auto iter = m_whitePieces.begin(); iter != m_whitePieces.end(); ++ iter )
     {
         delete *iter;
@@ -29,6 +28,9 @@ Board::~Board()
     {
         delete *iter;
     }
+
+    m_undoMovesCountMap.clear();
+    m_piecesMap.clear();
 }
 
 Board::Board( const Board& other )
@@ -155,9 +157,27 @@ void Board::addPiece( ChessPiece* piece )
 {
     if ( isValidPosition( piece->position() ) )
     {
+        // TODO: remove white and black pieces NOPE
+
+
         m_piecesMap[ piece->position() ] = piece;
-        piece->colour() == white ? m_whitePieces.push_back( piece ) : m_blackPieces.push_back( piece );
-        m_undoMovesCountMap[ piece ] = 0;
+
+        auto tmpPiecesVector = piece->colour() == white ?  m_whitePieces : m_blackPieces;
+        bool isFound = false;
+
+        for ( auto iter = tmpPiecesVector.begin(); iter != tmpPiecesVector.end(); ++iter )
+        {
+            if ( ( *iter ) == piece )
+            {
+                isFound = true;
+                break;
+            }
+        }
+        if ( isFound )
+        {
+            tmpPiecesVector.push_back( piece );
+            m_undoMovesCountMap[ piece ] = 0;
+        }
     }
 
     // add it to map
@@ -182,34 +202,34 @@ bool Board::movePiece( const Position& from, const Position& to )
     return true;
 }
 
-void Board::setWhitePieces( vector< ChessPiece* > pieces )
+void Board::setWhitePieces( QVector< ChessPiece* > pieces )
 {
     m_whitePieces = pieces;
 }
 
-vector< ChessPiece* > Board::whitePieces() const
+QVector< ChessPiece* > Board::whitePieces() const
 {
     return m_whitePieces;
 }
 
-void Board::setBlackPieces( vector< ChessPiece* > pieces )
+void Board::setBlackPieces( QVector< ChessPiece* > pieces )
 {
     m_blackPieces = pieces;
 }
 
-vector< ChessPiece* > Board::blackPieces() const
+QVector< ChessPiece* > Board::blackPieces() const
 {
     return m_blackPieces;
 }
 
-bool Board::placePieces( vector < ChessPiece* > pieces,
+bool Board::placePieces( QVector < ChessPiece* > pieces,
                          unsigned int index )
 {
     if ( index == pieces.size() )
     {
         return true;
     }
-    vector< ChessPiece* >tmpPieces( index );
+    QVector< ChessPiece* >tmpPieces( index );
     std::copy( pieces.begin(), pieces.begin() + index, tmpPieces.begin() ); //is this really the better way, obi-wan?
 
     for ( int i = 0; i < this->columns(); i++ )
@@ -242,7 +262,7 @@ bool Board::placePieces( vector < ChessPiece* > pieces,
 
 bool Board::isThreat( ChessPiece* piece )
 {
-    vector < Position > tmp = piece->allowedMovements();
+    QVector < Position > tmp = piece->allowedMovements();
     for ( unsigned int i = 0; i < tmp.size(); ++i )
     {
         if ( m_piecesMap[ tmp[ i ] ] != 0 )
@@ -254,13 +274,13 @@ bool Board::isThreat( ChessPiece* piece )
     return false;
 }
 
-bool Board::inLoS( const Position& position, vector < ChessPiece* > aVector ) const
+bool Board::inLoS( const Position& position, QVector < ChessPiece* > aVector ) const
 {
     if ( !aVector.empty() )
     {
         for ( unsigned int i = 0; i < aVector.size(); i++ )
         {
-            vector< Position > helper = aVector[i]->allowedMovements();
+            QVector< Position > helper = aVector[i]->allowedMovements();
             for ( auto iter = helper.begin(); iter != helper.end(); ++ iter  )
             {
                 if ( *iter == position )
@@ -338,25 +358,3 @@ int Board::passedMoves( ChessPiece* piece ) const
 
     return iter->second;
 }
-
-/*
-bool Board::inLoS( const Position& position, vector < ChessPiece* > aVector ) const
-{
-    if ( !aVector.empty() )
-    {
-        for ( unsigned int i = 0; i < aVector.size(); i++ )
-        {
-            vector < Position > helper = aVector[ i ]->allowedMovements();
-            for ( unsigned int j = 0; j < helper.size(); j++ )
-            {
-                if ( position == helper[ j ] )
-                {
-                   // cout << "Something sees me. I am at " << position << endl;
-                    return true;
-                }
-            }
-        }
-    }
-    return false;
-}
-*/

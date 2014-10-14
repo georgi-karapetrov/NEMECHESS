@@ -1,7 +1,7 @@
 #ifndef BISHOP_H
 #define BISHOP_H
 
-#include <vector>
+#include <QVector>
 #include "ChessPiece.h"
 
 namespace Chess{
@@ -16,7 +16,7 @@ public:
     ~Bishop();
 
     bool takes( const Position& position );
-    virtual vector< Position > allowedMovements();
+    virtual QVector< Position > allowedMovements();
 
     ChessPieceType pieceType();
 };
