@@ -15,13 +15,14 @@ class ComplexMovement : public Movement
 {
 public:
     ComplexMovement( Board* const board,
-                     const vector< Movement* >& moves );
+                     const vector< Movement* >& moves,
+                     MovementFlags flags = KINGSIDECASTLING_FLAG );
     virtual ~ComplexMovement();
 
     virtual bool doMove();
     virtual bool undoMove();
 
-    virtual QString toChessNotation( MovementFlags flags = NO_FLAG );
+    virtual QString toChessNotation();
 
     void pushMove( Movement* move );
     Movement* popMove();

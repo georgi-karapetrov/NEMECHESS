@@ -3,9 +3,10 @@
 using namespace Chess::GameLogic::Movements;
 
 ComplexMovement::ComplexMovement( Board* const board = 0,
-                                  const vector< Movement* >& moves = vector< Movement* >() )//I hope this is  an empty vector,
+                                  const vector< Movement* >& moves = vector< Movement* >(),
+                                  MovementFlags flags)//I hope this is  an empty vector,
                                                                                     //doesn't work the Gope way
-    : Movement( board ),
+    : Movement( board, flags ),
       m_movesHeap( moves )
 {
 }
@@ -50,9 +51,15 @@ Movement* ComplexMovement::popMove()
     return tmp;
 }
 
-QString ComplexMovement::toChessNotation( MovementFlags flags )
+QString ComplexMovement::toChessNotation()
 {
-    Q_UNUSED( flags )
-
-    return "Complex";
+    switch ( m_flags )
+    {
+    case KINGSIDECASTLING_FLAG:
+        return "0-0";
+    case QUEENSIDECASTLING_FLAG:
+        return "0-0-0";
+    default:
+        return "Unknown Complex move";
+    }
 }

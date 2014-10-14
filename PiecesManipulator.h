@@ -75,20 +75,23 @@ public:
 
     bool kingInCheck( const Colour& kingColour );
 
-    void setUndoMoves( const QStack< Movement* >& movesStack );
-    QStack< Movement* > undoMoves() const;
+    void setUndoMoves( QStack< Movement* >* movesStack );
+    QStack< Movement* >* undoMoves() const;
 
-    void setRedoMoves( const QStack< Movement* >& movesStack );
-    QStack< Movement* > redoMoves() const;
+    void setRedoMoves( QStack< Movement* >* movesStack );
+    QStack< Movement* >* redoMoves() const;
+
+    QStack< ChessPiece* > capturedPieces() const;
 
 private:
     bool isCastlingAllowed( ChessPiece* const king, ChessPiece* const rook, const CastlingType& type );
 
 private:
-    QStack< Movement* > m_undoMoves;
-    QStack< Movement* > m_redoMoves;
-    Colour              m_currentColour;
-    Board*              m_board;
+    QStack< Movement* >*   m_undoMoves;
+    QStack< Movement* >*   m_redoMoves;
+    QStack< ChessPiece* >  m_capturedPieces;
+    Colour                 m_currentColour;
+    Board*                 m_board;
 };
 
 }

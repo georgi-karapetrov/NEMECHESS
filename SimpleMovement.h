@@ -3,6 +3,7 @@
 
 #include "Movement.h"
 #include "Position.h"
+#include <QVector>
 
 using namespace std;
 
@@ -25,13 +26,14 @@ class SimpleMovement : public Movement
 public:
     SimpleMovement( const Position& from = Position( 0, 0 ),
                     const Position& to   = Position( 0, 1 ),
-                    Board* const   board = 0 );
+                    Board* const   board = 0,
+                    MovementFlags flags = NORMALMOVE_FLAG );
     virtual ~SimpleMovement();
 
     virtual bool doMove();
     virtual bool undoMove();
 
-    virtual QString toChessNotation( MovementFlags flags  = NO_FLAG );
+    virtual QString toChessNotation();
 
     void setFrom( const Position& from );
     Position from() const;
@@ -43,10 +45,9 @@ public:
     Board* board() const;
 
 private:
-    Position m_from;
-    Position m_to;
-    
-    vector< ChessPiece* > m_capturedPieces;
+    Position                m_from;
+    Position                m_to;
+//    QVector< ChessPiece* > m_capturedPieces;
 };
 
 }

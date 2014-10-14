@@ -1,9 +1,10 @@
 #include "SimpleMovement.h"
 #include "Board.h"
+
 using namespace Chess::GameLogic::Movements;
 
-SimpleMovement::SimpleMovement( const Position& from, const Position& to, Board* const board  )
-    : Movement( board ),
+SimpleMovement::SimpleMovement( const Position& from, const Position& to, Board* const board, MovementFlags flags )
+    : Movement( board, flags ),
       m_from( from ),
       m_to( to )
 {
@@ -12,16 +13,16 @@ SimpleMovement::SimpleMovement( const Position& from, const Position& to, Board*
 SimpleMovement::~SimpleMovement()
 {
     cout << "~SimpleMovement()\n";
-    m_capturedPieces.clear();
+//    m_capturedPieces.clear();
 }
 
 bool SimpleMovement::doMove()
 {
 
-    if ( m_board->isPiece( m_to ) )
-    {
-        m_capturedPieces.push_back( m_board->pieceAt( m_to ) );
-    }
+//    if ( m_board->isPiece( m_to ) )
+//    {
+//        m_capturedPieces.push_back( m_board->pieceAt( m_to ) );
+//    }
 
     const bool isPieceMoved = m_board->movePiece( m_from, m_to );
 
@@ -44,12 +45,6 @@ bool SimpleMovement::undoMove()
     if ( ! tmp )
     {
         return false;
-    }
-
-    if ( ! m_capturedPieces.empty() )
-    {
-        m_board->addPiece( m_capturedPieces.back() );
-        m_capturedPieces.pop_back();
     }
 
     m_board->m_undoMovesCountMap[ piece ] --;
@@ -87,8 +82,20 @@ Board* SimpleMovement::board() const
     return m_board;
 }
 
-QString SimpleMovement::toChessNotation( MovementFlags flags )
+QString SimpleMovement::toChessNotation()
 {
-    Q_UNUSED( flags )
-    return "Simple";
+    QString moveString = QString( QString( 'a' + m_from.x() + QString::number( m_board->rows() - m_from.y() ) )
+                                  + " -> " + QString ( 'a' + m_to.x() + QString::number( m_board->rows() - m_to.y() ) ) );
+    switch ( m_flags ){
+    case NORMALMOVE_FLAG:
+        return moveString;
+    case CHECK_FLAG:
+        return QString( moveString + '#' );
+
+//    case CAPTURE_FLAG:
+//        return QString( moveString + 'x' );
+    }
+
+    return moveString;
 }
+

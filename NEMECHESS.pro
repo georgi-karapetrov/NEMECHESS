@@ -12,6 +12,7 @@ TARGET = NEMECHESS
 TEMPLATE = app
 
 CONFIG += c++11
+QMAKE_CXXFLAGS = -Wall -Wpedantic
 
 SOURCES += main.cpp\
         Widget.cpp \
@@ -32,7 +33,8 @@ SOURCES += main.cpp\
     Rook.cpp \
     SimpleMovement.cpp \
     BoardInterface.cpp \
-    MovesListModel.cpp
+    MovesListModel.cpp \
+    StartGameMovement.cpp
 
 HEADERS  += Widget.h \
     Bishop.h \
@@ -52,7 +54,8 @@ HEADERS  += Widget.h \
     Rook.h \
     SimpleMovement.h \
     BoardInterface.h \
-    MovesListModel.h
+    MovesListModel.h \
+    StartGameMovement.h
 
 OTHER_FILES += \
     NEMECHESS.pro.user

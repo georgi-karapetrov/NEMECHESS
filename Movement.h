@@ -9,10 +9,13 @@ namespace Chess{
 
 enum MovementFlagsEnum
 {
-    NO_FLAG        = 0,
-    CASTLING_FLAG  = 1,
-    CHECK_FLAG     = 2,
-    POWERMOVE_FLAG = 4
+//    NORMALMOVE_FLAG = 0,
+    NORMALMOVE_FLAG        =  1,
+    KINGSIDECASTLING_FLAG  =  2,
+    QUEENSIDECASTLING_FLAG =  4,
+    CHECK_FLAG             =  8,
+    POWERMOVE_FLAG         = 16,
+    CAPTURE_FLAG           = 32
 };
 Q_DECLARE_FLAGS( MovementFlags, MovementFlagsEnum )
 Q_DECLARE_OPERATORS_FOR_FLAGS( MovementFlags )
@@ -38,16 +41,20 @@ using namespace std;
 class Movement
 {
 public:
-    Movement( Board* const board = 0 );
+    Movement( Board* const board = 0, MovementFlags flags = NORMALMOVE_FLAG );
     virtual ~Movement();
 
     virtual bool doMove() = 0;
     virtual bool undoMove() = 0;
 
-    virtual QString toChessNotation( MovementFlags flags = NO_FLAG ) = 0;
+    virtual QString toChessNotation() = 0;
+
+    void setFlags( const MovementFlags& flags );
+    MovementFlags flags() const;
 
 protected:
     Board* m_board;
+    Chess::MovementFlags m_flags;
 
 };
 

@@ -18,17 +18,30 @@ GameEngine::GameEngine( const int rows,
       m_inCheckFlag( false )
 {
     m_widget = new Widget( 0 );
-    m_model =  new MovesListModel( this );
+    qDebug() << "Widget created";
 
-    m_model->addMove( "Game started" );
+    m_model =  new MovesListModel( this );
+    qDebug() << "Model created";
+
+    m_undoMoves.push( new StartGameMovement( m_board ) );
+    m_model->combineUndoRedo( &m_undoMoves, &m_redoMoves );
+
+    m_manipulator.setUndoMoves( &m_undoMoves );
+    m_manipulator.setRedoMoves( &m_redoMoves );
+    qDebug() << "Undo/Redo set";
 
     connect( m_widget, SIGNAL(clickCell(QPoint)), this, SLOT(clickCellListener(QPoint)));
     connect( this, SIGNAL(jobFinished()), m_widget, SLOT(repaint()) );
     connect( m_widget->view(), SIGNAL(clicked(QModelIndex)), this, SLOT(lastMoveClickedListener(QModelIndex)) );
     connect( this, SIGNAL(figureSelected(Position)), m_widget, SLOT(figureSelectedListener(Position)) );
 
+    qDebug() << "All slots connected";
+
     m_widget->setInterface( BoardInterface ( m_board ) );
     m_widget->setMovesListModel( m_model );
+        qDebug() << "Interface and model set";
+    m_model->refresh();
+
     m_widget->view()->setGeometry( BoardInterface::X_OFFSET * 3 + m_board->columns() * m_board->cellWidth(),
                                    BoardInterface::Y_OFFSET,
                                    200,
@@ -38,8 +51,15 @@ GameEngine::GameEngine( const int rows,
 
     for ( int i = 0; i < numberOfPlayers; ++i )
     {
-        Player player( m_board, startingColour );
+        Player* player = new Player( m_board, startingColour, &m_manipulator );
+
+        qDebug() << "Manipulator created at:" << player->manipulator() << "Should be:" << &m_manipulator;
+        player->setManipulator( &m_manipulator );
+
+
+        qDebug() << "Address set to:" << player->manipulator();
         m_players.push_back( player );
+
         startingColour = nextColour( startingColour );
     }
 }
@@ -87,9 +107,9 @@ MovesListModel* GameEngine::model()
     return m_model;
 }
 
-void GameEngine::addPlayer( Player& player )
+void GameEngine::addPlayer( Player* player )
 {
-    player.setBoard( m_board );
+    player->setBoard( m_board );
     m_players.push_back( player );
 }
 
@@ -107,21 +127,7 @@ void GameEngine::run()
 void GameEngine::clickCellListener( const QPoint& point )
 {
 
-//    string instruction;
-//    while ( !m_quit )
-//    {
-//        cout << ">>> ";
-//        cin >> instruction;
 
-//        parseInstructions( instruction );
-//        cin.clear();
-//        //cin.ignore();
-//        //cin.flush();
-
-//        system( "clear" );
-
-//        m_board->display();
-//    }
 
     this->chewCoordinates( point );
     emit( jobFinished() );
@@ -131,13 +137,14 @@ void GameEngine::setPiecesForTesting()
 {
     m_board->setRows( 8 );
     m_board->setColumns( 8 );
-    ChessPiece* whiteQueen = new Queen( Position( 0, 7 ), Chess::white, m_board );
+
+    ChessPiece* whiteQueen = new Queen( Position( 0, 7 ), Chess::black, m_board );
     m_board->addPiece( whiteQueen );
 
-    ChessPiece* blackKing = new King( Position( 1, 0 ), Chess::black, m_board );
+    ChessPiece* blackKing = new King( Position( 2, 7 ), Chess::white, m_board );
     m_board->addPiece( blackKing );
 
-    ChessPiece* blackRook = new Rook( Position( 0, 0 ), Chess::black, m_board );
+    ChessPiece* blackRook = new Rook( Position( 1, 7), Chess::white, m_board );
     m_board->addPiece( blackRook );
 }
 
@@ -335,34 +342,14 @@ Position GameEngine::toPosition( QPoint point )
                      floor( ( point.y() - BoardInterface::Y_OFFSET ) / m_board->cellHeight() ) );
 }
 
-QString GameEngine::toChessNotation( /*const Movement& movement, */const Position& position )
-{
-    //todo: move logic in model //can't and shouldn't
-    return QString( 'a' + position.x() + QString::number( m_board->rows() - position.y() ) );
-}
-
 void GameEngine::chewCoordinates( const QPoint& point )
 {
     Position position = toPosition( point );
-    Player currentPlayer = m_currentPlayerColour == Chess::white ? PLAYER1 : PLAYER2;
+    Player* currentPlayer = m_currentPlayerColour == Chess::white ? m_players[ 0 ] : m_players[ 1 ];
 
     if ( m_isFigureSelected )
     {
         m_to = position;
-
-//        if ( m_board->isPiece( m_to ) )
-//        {
-//            if ( m_board->pieceAt( m_from )->pieceType() == KING_TYPE
-//                 && m_board->pieceAt( m_to )->pieceType() == ROOK_TYPE )
-//            {
-//                CastlingType castlingType = m_board->pieceAt( m_from )->position().x() < m_board->pieceAt( m_to )->position().x() ? KINGSIDE_CASTLING
-//                                                                                                                                  : QUEENSIDE_CASTLING;
-//               if ( m_manipulator.castling( m_currentPlayerColour, castlingType ) )
-//               {
-//                   this->nextPlayersTurn();
-//               }
-//            }
-//        }
 
         Error makeAMoveOutcome = m_manipulator.makeAMove( m_from,
                                                           m_to,
@@ -370,23 +357,35 @@ void GameEngine::chewCoordinates( const QPoint& point )
 
         if ( makeAMoveOutcome == Success || makeAMoveOutcome == Castling )
         {
-            if ( currentPlayer.isInCheck() )
+            Player* otherPlayer = currentPlayer == m_players[ 0 ] ? m_players[ 1 ] : m_players[ 0 ];
+
+            if ( otherPlayer->isInCheck() )
             {
-                m_manipulator.undo( true );
+                m_manipulator.undoMoves()->top()->setFlags( CHECK_FLAG );
+            }
+
+            if ( currentPlayer->isInCheck() )
+            {
+
+                m_manipulator.undo( true ); // silent
                 m_isFigureSelected = false;
                 return;
             }
 
-            if ( ! m_manipulator.redoMoves().isEmpty() )
+            if ( ! m_manipulator.redoMoves()->isEmpty() )
             {
                 m_manipulator.flushRedo();
                 m_model->clearRedoMoves();
             }
-            m_widget->view()->clearSelection();
-            m_model->setLastRowClicked( m_model->rowCount() );
-            m_model->addMove( this->toChessNotation( m_from ) + " -> " + this->toChessNotation( m_to ) );
 
-            qDebug() << currentPlayer.isInCheck();
+            m_model->combineUndoRedo( &m_undoMoves, &m_redoMoves );
+
+            qDebug() << m_model->movesVector().at( 0 )->toChessNotation();
+
+            m_widget->view()->clearSelection();
+            m_model->setLastRowClicked( m_model->rowCount() - 1  );
+
+            qDebug() << currentPlayer->isInCheck();
             this->nextPlayersTurn();
         }
 
@@ -411,8 +410,7 @@ void GameEngine::chewCoordinates( const QPoint& point )
 
 void GameEngine::lastMoveClickedListener( const QModelIndex& index )
 {
-
-    if ( index.row() < m_model->lastRowClicked() )//&& m_isFirstClick )
+    if ( index.row() < m_model->lastRowClicked() )
     {
         for ( int i = index.row(); i < m_model->lastRowClicked(); ++ i ) // '<' and '<='
         {
@@ -423,7 +421,7 @@ void GameEngine::lastMoveClickedListener( const QModelIndex& index )
         }
         m_isFirstClick = false;
     }
-    else
+    else if ( index.row() > m_model->lastRowClicked() )
     {
         m_isFirstClick = true;
         for ( int i = m_model->lastRowClicked(); i < index.row(); ++ i ) // '<' to '<='
@@ -447,3 +445,22 @@ void GameEngine::selectFigure( const Position& position )
 }
 
 // TODO: Pawn promotion
+
+//void run_old()
+//{
+//    string instruction;
+//    while ( !m_quit )
+//    {
+//        cout << ">>> ";
+//        cin >> instruction;
+
+//        parseInstructions( instruction );
+//        cin.clear();
+//        //cin.ignore();
+//        //cin.flush();
+
+//        system( "clear" );
+
+//        m_board->display();
+//    }
+//}

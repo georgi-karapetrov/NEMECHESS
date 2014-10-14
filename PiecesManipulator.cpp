@@ -10,6 +10,7 @@ using namespace Chess::GameLogic::GameComponents;
 
 PiecesManipulator::PiecesManipulator( Board* board )
     : m_board( board )
+    //  m_capturedPieces( QStack< ChessPiece*  >() )
 {
 }
 
@@ -19,7 +20,7 @@ PiecesManipulator::~PiecesManipulator()
     this->flushUndo();
 }
 
-Error PiecesManipulator::makeAMove( const Position& from, const Position& to, Colour colour )
+Error PiecesManipulator::makeAMove( const Position& from, const Position& to, Colour colour )  // just do it
 {
     if ( !m_board->isPiece( from ) || !m_board->isValidPosition( to ) )
     {
@@ -58,7 +59,7 @@ Error PiecesManipulator::makeAMove( const Position& from, const Position& to, Co
 //        return Check;
 //    }
 
-    //if the figure attempts to move in its allowed movements
+    //if the figure attempts m_capturedPiecesto move in its allowed movements
     vector< Position > tmp = m_board->pieceAt( from )->allowedMovements();
     if ( std::find( tmp.begin(), tmp.end(), to ) == tmp.end() )
     {
@@ -67,48 +68,80 @@ Error PiecesManipulator::makeAMove( const Position& from, const Position& to, Co
 
     Movement* movement = new SimpleMovement( from, to, m_board );
 
-    if ( ! movement->doMove() )
+//    if ( ! movement->doMovem_capturedPieces() )
+//    {
+//        return InvalidDestination;
+//    }
+
+    ChessPiece* forCapture = 0;
+
+    if ( m_board->isPiece( to ) && ! m_board->isAlly( to, m_board->pieceAt( from )->colour() ) )
     {
-        return InvalidDestination;
+        forCapture = m_board->pieceAt( to );
     }
 
-    m_undoMoves.push( movement );
-    return Success;
+    if ( movement->doMove() )
+    {
+        if ( forCapture != 0 )
+        {
+            movement->setFlags( CAPTURE_FLAG );
+            m_capturedPieces.push( forCapture );
+        }
+        m_undoMoves->push( movement );
+        return Success;
+    }
+
+    return InvalidDestination;
+
+}
+
+QStack< ChessPiece* > PiecesManipulator::capturedPieces() const
+{
+    return m_capturedPieces;
 }
 
 bool PiecesManipulator::undo( bool isSilent )
 {
-    if ( ! m_undoMoves.empty() )
+    if ( ! m_undoMoves->empty() )
     {
-        m_undoMoves.top()->undoMove();
+        Movement* const topMovement = m_undoMoves->pop();
+
+        topMovement->undoMove();
+
+        if ( ! m_capturedPieces.empty() && topMovement->flags().testFlag( CAPTURE_FLAG  ) )
+        {
+            m_board->addPiece( m_capturedPieces.pop() );
+        }
+
         if ( ! isSilent )
         {
-            m_redoMoves.push( m_undoMoves.top() );
-            m_undoMoves.pop();
+            m_redoMoves->push( topMovement );
         }
+        qDebug() << "A hush falls on the battlefield";
         return true;
     }
+
     return false;
 }
 
 void PiecesManipulator::flushUndo()
 {
     cout << "PiecesManipulator::destroy()\n";
-    while ( ! m_undoMoves.empty() )
+    while ( ! m_undoMoves->empty() )
     {
-        delete m_undoMoves.top();
-        m_undoMoves.pop();
+//        delete m_undoMoves->top();
+        m_undoMoves->pop();
     }
 }
 
 
 bool PiecesManipulator::redo()
 {
-    if ( !m_redoMoves.empty() )
+    if ( !m_redoMoves->empty() )
     {
-        m_redoMoves.top()->doMove();
-        m_undoMoves.push( m_redoMoves.top() );
-        m_redoMoves.pop();
+        m_redoMoves->top()->doMove();
+        m_undoMoves->push( m_redoMoves->top() );
+        m_redoMoves->pop();
         return true;
     }
     return false;
@@ -116,10 +149,10 @@ bool PiecesManipulator::redo()
 
 void PiecesManipulator::flushRedo()
 {
-    while ( !m_redoMoves.empty() )
+    while ( !m_redoMoves->empty() )
     {
-//        delete m_redoMoves.top();
-        m_redoMoves.pop();
+//        delete m_redoMoves->top();
+        m_redoMoves->pop();
     }
 }
 
@@ -133,7 +166,7 @@ bool PiecesManipulator::castling( const Colour& colour, const CastlingType& type
     ChessPiece* king = m_board->pieceAt( kingPosition );
 
     Position rookPosition = colour == Chess::white ? type == KINGSIDE_CASTLING ? WHITE_K_ROOK_POSITION : WHITE_Q_ROOK_POSITION
-                                            : type == KINGSIDE_CASTLING ? BLACK_K_ROOK_POSITION : BLACK_Q_ROOK_POSITION;
+                                                   : type == KINGSIDE_CASTLING ? BLACK_K_ROOK_POSITION : BLACK_Q_ROOK_POSITION;
     ChessPiece* rook = m_board->pieceAt( rookPosition );
 
     if ( ! m_board->isPiece( kingPosition )
@@ -183,10 +216,10 @@ bool PiecesManipulator::castling( const Colour& colour, const CastlingType& type
     m_board->movePiece( king->position(), Position( castlingOffsetKing, king->position().y() ) );
     m_board->movePiece( rook->position(), Position( castlingOffsetRook, rook->position().y() ) );
 
+    MovementFlags castlingFlag = type == KINGSIDE_CASTLING ? KINGSIDECASTLING_FLAG : QUEENSIDECASTLING_FLAG;
+    Movement* castlingMovement = new ComplexMovement( m_board, simpleMovements, castlingFlag  );
 
-    Movement* castlingMovement = new ComplexMovement( m_board, simpleMovements );
-
-    m_undoMoves.push( castlingMovement );
+    m_undoMoves->push( castlingMovement );
 
     return true;
 }
@@ -276,22 +309,22 @@ bool PiecesManipulator::kingInCheck( const Colour& kingColour )
     return inCheck;
 }
 
-void PiecesManipulator::setUndoMoves( const QStack< Movement* >& movesStack )
+void PiecesManipulator::setUndoMoves( QStack< Movement* >* movesStack )
 {
     m_undoMoves = movesStack;
 }
 
-QStack< Movement* > PiecesManipulator::undoMoves() const
+QStack< Movement* >* PiecesManipulator::undoMoves() const
 {
     return m_undoMoves;
 }
 
-void PiecesManipulator::setRedoMoves( const QStack< Movement* >& movesStack )
+void PiecesManipulator::setRedoMoves( QStack<Movement *>* movesStack )
 {
     m_redoMoves = movesStack;
 }
 
-QStack< Movement* > PiecesManipulator::redoMoves() const
+QStack< Movement* >* PiecesManipulator::redoMoves() const
 {
     return m_redoMoves;
 }

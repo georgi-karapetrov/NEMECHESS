@@ -40,7 +40,8 @@ vector< Position > Pawn::allowedMovements()
     }
 
     if ( m_position == m_initialPosition
-         && m_board->isValidPosition( Position( m_position.x(), m_position.y() + offset * 2 ) ) )
+         && m_board->isValidPosition( Position( m_position.x(), m_position.y() + offset * 2 ) )
+         && ! m_board->isPiece( Position( m_position.x(), m_position.y() + offset * 2 ) ) )
     {
         tmp.push_back( Position( m_position.x(), m_position.y() + offset * 2 )  );
     }

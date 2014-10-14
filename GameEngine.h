@@ -1,9 +1,6 @@
 ﻿#ifndef GAMEENGINE_H
 #define GAMEENGINE_H
 
-#define PLAYER1 m_players[ 0 ]
-#define PLAYER2 m_players[ 1 ]
-
 #include "Board.h"
 #include "PiecesManipulator.h"
 #include "Player.h"
@@ -22,6 +19,8 @@
 #include "King.h"
 #include "Queen.h"
 #include "MovesListModel.h"
+#include "StartGameMovement.h"
+
 #include <Widget.h>
 
 namespace Chess{
@@ -80,7 +79,7 @@ public:
     void setModel( MovesListModel* model );
     MovesListModel* model();
 
-    void addPlayer( Player& player );
+    void addPlayer( Player* player );
     void nextPlayersTurn();
 
     void parseInstructions( const string& instruction );
@@ -89,8 +88,6 @@ public:
     void run();
     void setStandardGame();
     void chewCoordinates( const QPoint& point );
-
-    QString toChessNotation( const Position& position );
 
 private:
     Position fromChessNotation( const char& x, const char& y );
@@ -116,18 +113,20 @@ public slots:
     void lastMoveClickedListener( const QModelIndex& index );
 
 private:
-    Board*            m_board;
-    PiecesManipulator m_manipulator;
-    vector< Player >  m_players;
-    Colour            m_currentPlayerColour;
-    bool              m_quit;
-    Position          m_from;
-    Position          m_to;
-    bool              m_isFigureSelected;
-    bool              m_isFirstClick;
-    bool              m_inCheckFlag;
-    MovesListModel*   m_model;
-    Widget*           m_widget;
+    Board*                 m_board;
+    PiecesManipulator      m_manipulator;
+    vector< Player* >      m_players;
+    Colour                 m_currentPlayerColour;
+    bool                   m_quit;
+    Position               m_from;
+    Position               m_to;
+    bool                   m_isFigureSelected;
+    bool                   m_isFirstClick;
+    bool                   m_inCheckFlag;
+    MovesListModel*        m_model;
+    Widget*                m_widget;
+    QStack< Movement* >    m_undoMoves;
+    QStack< Movement* >    m_redoMoves;
 };
 
 }

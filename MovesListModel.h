@@ -26,18 +26,25 @@ public:
 
     virtual Qt::ItemFlags flags( const QModelIndex& index ) const;
 
+    void setMovesVector( const QVector< Movement* >& movesVector );
+    QVector< Movement* > movesVector() const;
+
     QString toChessNotation( const Position& position );
     void addMove( const QString& move );
 
     void setLastRowClicked( const int& row );
     int lastRowClicked() const;
 
+    void refresh();
+
     void clearRedoMoves();
 
+    void combineUndoRedo(const QStack<Movement *> *undoMoves, const QStack<Movement *> *redoMoves );
+
 private:
-    QStringList          m_list;      // #I am full of brilliant ideas
-    QStack< Movement* >* m_someStack; // polymerization between the undo and redo stacks
-    int                  m_lastRowClicked;
+    QStringList          m_list;           // #I am full of brilliant ideas
+    int                  m_lastRowClicked; // polymerization between the undo and redo stacks
+    QVector< Movement* > m_movesVector;
 };
 
 #endif // MOVESLISTMODEL_H

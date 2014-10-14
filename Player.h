@@ -21,7 +21,7 @@ using namespace Chess::ChessComponents::PlayField;
 class Player
 {
 public:
-    Player( Board* const board = 0, const Colour& playsWith = white );
+    Player( Board* const board = 0, const Colour& playsWith = white, PiecesManipulator* manipulator = 0 );
 
     void setColour( const Colour& colour );
     Colour colour() const;
