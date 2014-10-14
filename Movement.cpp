@@ -23,7 +23,3 @@ Chess::MovementFlags Movement::flags() const
 {
     return m_flags;
 }
-
-// TODO: move toChessNotation() functionality here #OK
-//       create flags for the moves #OK
-//       connect the model and the movement collection
