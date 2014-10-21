@@ -74,7 +74,7 @@ public:
     void setBoard( Board* board );
     Board *board() const;
 
-    virtual void accept( Visitor& visitor ) = 0;
+    virtual void accept( Visitor& visitor, const Position& to ) = 0;
 
 
 protected:

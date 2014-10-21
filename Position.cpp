@@ -85,6 +85,9 @@ int Position::y() const
 
 void Position::copy( const Position& other )
 {
-    m_x = other.m_x;
-    m_y = other.m_y;
+    if ( *this != other )
+    {
+        m_x = other.m_x;
+        m_y = other.m_y;
+    }
 }

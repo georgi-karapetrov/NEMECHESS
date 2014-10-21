@@ -21,14 +21,16 @@ TakenVisitor::~TakenVisitor()
 }
 
 
-void TakenVisitor::visit( ChessPiece* chessPiece )
+void TakenVisitor::visit( ChessPiece* chessPiece, const Position& to )
 {
+    Q_UNUSED( to );
     qDebug() << "TakenVisitor::visit( ChessPiece )";
     Q_UNUSED( chessPiece );
 }
 
-void TakenVisitor::visit( Pawn* pawn )
+void TakenVisitor::visit( Pawn* pawn, const Position& to )
 {
+    Q_UNUSED( to );
     qDebug() << "TakenVisitor::visit( Pawn )";
 
     if ( pawn->enPassantPawn() != 0 )
@@ -40,8 +42,9 @@ void TakenVisitor::visit( Pawn* pawn )
     m_capturedPieces->push( pawn );
 }
 
-void TakenVisitor::visit( EnPassantPawn* enPassantPawn )
+void TakenVisitor::visit( EnPassantPawn* enPassantPawn, const Position& to )
 {
+    Q_UNUSED( to );
     qDebug() << "TakenVisitor::visit( EnPassantPawn )";
 
     enPassantPawn->board()->removePiece( enPassantPawn->pawn() );
@@ -51,31 +54,36 @@ void TakenVisitor::visit( EnPassantPawn* enPassantPawn )
     m_capturedPieces->push( enPassantPawn->pawn() );
 }
 
-void TakenVisitor::visit( Rook* rook )
+void TakenVisitor::visit( Rook* rook, const Position& to )
 {
+    Q_UNUSED( to );
     qDebug() << "TakenVisitor::visit( Rook )";
     m_capturedPieces->push(rook );
 }
 
-void TakenVisitor::visit( Knight* knight )
+void TakenVisitor::visit( Knight* knight, const Position& to )
 {
+    Q_UNUSED( to );
     qDebug() << "TakenVisitor::visit( Knight )";
     m_capturedPieces->push( knight );
 }
 
-void TakenVisitor::visit( Bishop* bishop )
+void TakenVisitor::visit( Bishop* bishop, const Position& to )
 {
+    Q_UNUSED( to );
     qDebug() << "TakenVisitor::visit( Bishop )";
     m_capturedPieces->push( bishop );
 }
 
-void TakenVisitor::visit( Queen* queen )
+void TakenVisitor::visit( Queen* queen, const Position& to )
 {
+    Q_UNUSED( to );
     qDebug() << "TakenVisitor::visit( Queen )";
     m_capturedPieces->push( queen );
 }
-void TakenVisitor::visit( King* king )
+void TakenVisitor::visit( King* king, const Position& to )
 {
+    Q_UNUSED( to );
     qDebug() << "TakenVisitor::visit( King )";
     m_capturedPieces->push( king );
 }

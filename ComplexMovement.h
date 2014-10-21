@@ -15,7 +15,7 @@ class ComplexMovement : public Movement
 {
 public:
     ComplexMovement( Board* const board,
-                     const QVector< Movement* >& moves,
+                     const QVector< Movement* >& moves  = QVector< Movement* >(),
                      MovementFlags flags = KINGSIDECASTLING_FLAG );
     virtual ~ComplexMovement();
 

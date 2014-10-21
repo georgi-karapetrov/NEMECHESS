@@ -64,7 +64,7 @@ ChessPieceType Knight::pieceType()
     return KNIGHT_TYPE;
 }
 
-void Knight::accept( Visitor& visitor )
+void Knight::accept( Visitor& visitor, const Position& to )
 {
-    visitor.visit( this );
+    visitor.visit( this, to );
 }

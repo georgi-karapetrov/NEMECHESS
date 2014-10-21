@@ -24,7 +24,7 @@ public:
     virtual QVector< Position > allowedMovements();
     virtual ChessPieceType pieceType();
 
-    virtual void accept( Visitor& visitor );
+    virtual void accept( Visitor& visitor, const Position& to );
 
 private:
     ChessPiece* m_pawn;

@@ -20,7 +20,7 @@ public:
 
     ChessPieceType pieceType();
 
-    virtual void accept(Visitor& visitor );
+    virtual void accept(Visitor& visitor, const Position& to );
 
 };
 

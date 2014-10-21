@@ -110,7 +110,7 @@ ChessPieceType Rook::pieceType()
     return ROOK_TYPE;
 }
 
-void Rook::accept( Visitor& visitor )
+void Rook::accept( Visitor& visitor ,const Position& to)
 {
-    visitor.visit( this );
+    visitor.visit( this, to );
 }

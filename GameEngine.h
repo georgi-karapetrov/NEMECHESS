@@ -116,8 +116,7 @@ public slots:
 
 private:
     Board*                 m_board;
-    PiecesManipulator      m_manipulator;
-    QVector< Player* >      m_players;
+    QVector< Player* >     m_players;
     Colour                 m_currentPlayerColour;
     bool                   m_quit;
     Position               m_from;
@@ -129,6 +128,7 @@ private:
     Widget*                m_widget;
     QStack< Movement* >    m_undoMoves;
     QStack< Movement* >    m_redoMoves;
+    PiecesManipulator      m_manipulator;
 };
 
 }

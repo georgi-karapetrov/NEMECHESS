@@ -36,7 +36,7 @@ public:
 
     int offset() const;
 
-    virtual void accept( Visitor& visitor );
+    virtual void accept( Visitor& visitor, const Position& to );
 
 private:
     bool canAttackAt( const Position& position ) const;

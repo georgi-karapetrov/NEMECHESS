@@ -2,8 +2,8 @@
 
 using namespace Chess::GameLogic::Movements;
 
-ComplexMovement::ComplexMovement( Board* const board = 0,
-                                  const QVector< Movement* >& moves = QVector< Movement* >(),
+ComplexMovement::ComplexMovement( Board* const board,
+                                  const QVector< Movement* >& moves,
                                   MovementFlags flags)//I hope this is  an empty QVector,
                                                                                     //doesn't work the Gope way
     : Movement( board, flags ),
@@ -22,19 +22,19 @@ ComplexMovement::~ComplexMovement()
 
 bool ComplexMovement::doMove()
 {
-    for ( auto i = m_movesHeap.begin(); i != m_movesHeap.end(); ++ i )
+    for ( auto iter = m_movesHeap.begin(); iter != m_movesHeap.end(); ++ iter )
     {
-        ( *i )->doMove();
+        ( *iter )->doMove();
     }
     return true;
 }
 
 bool ComplexMovement::undoMove()
 {
-    for ( int i = m_movesHeap.size() - 1; i >= 0 ; -- i )
+    for ( int iter = m_movesHeap.size() - 1; iter >= 0 ; -- iter )
     {
-       m_movesHeap[ i ]->undoMove();
-       delete m_movesHeap[ i ];
+       m_movesHeap[ iter ]->undoMove();
+  //     delete m_movesHeap[ i ];
     }
     return true;
 }

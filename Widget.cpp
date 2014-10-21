@@ -41,6 +41,7 @@ void Widget::paintEvent( QPaintEvent* event )
     painter.setPen( Qt::black );
     painter.setBrush( Qt::NoBrush );
     m_interface.drawBoard( painter );
+//    this->chichuAdi( painter, 0, 0, 50, 10, 10 );
 }
 
 void Widget::mouseReleaseEvent( QMouseEvent* event )
@@ -65,4 +66,38 @@ void Widget::movesListItemClicked(QModelIndex index)
 void Widget::figureSelectedListener( const Position& position )
 {
     m_interface.setSelectedPosition( position );
+}
+
+// don't worry, it's harmless
+void Widget::chichuAdi( QPainter& painter, const int x, const int y, const int size , const int xOffset , const int yOffset )
+{
+    painter.drawLine( xOffset + x + size,
+                      yOffset + y + size,
+                      xOffset + x + 2 * size,
+                      yOffset + y + size );
+
+    painter.drawLine( xOffset + x + size,
+                      yOffset + y + size,
+                      xOffset + x + size,
+                      yOffset + y +size * 3 );
+
+    painter.drawLine( xOffset + x + size,
+                      yOffset + y + size * 3,
+                      xOffset + x,
+                      yOffset + y + size * 3 );
+
+    painter.drawLine( xOffset + x,
+                      yOffset + y + size * 2,
+                      xOffset + x + size * 2,
+                      yOffset + y + size * 2 );
+
+    painter.drawLine( xOffset + x,
+                      yOffset + y + size * 2,
+                      xOffset + x,
+                      yOffset + y + size );
+
+    painter.drawLine( xOffset + x + size * 2,
+                      yOffset + y + size * 2,
+                      xOffset + x + size * 2,
+                      yOffset + y + size * 3 );
 }

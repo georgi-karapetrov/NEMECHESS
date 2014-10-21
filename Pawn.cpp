@@ -90,7 +90,10 @@ ChessPieceType Pawn::pieceType()
 
 void Pawn::makeEnPassant()
 {
-    m_enPassantPawn = new EnPassantPawn( Position( m_position.x(), m_position.y() - m_offset ), this );
+    // changes in logic might cause to switch between these
+//
+//    m_enPassantPawn = new EnPassantPawn( m_position, this );
+    m_enPassantPawn = new EnPassantPawn( Position( m_position.x(), m_position.y() + m_offset ), this );
     m_board->addPiece( m_enPassantPawn );
 }
 
@@ -109,7 +112,7 @@ int Pawn::offset() const
     return m_offset;
 }
 
-void Pawn::accept( Visitor& visitor )
+void Pawn::accept( Visitor& visitor, const Position& to )
 {
-    visitor.visit( this );
+    visitor.visit( this, to );
 }

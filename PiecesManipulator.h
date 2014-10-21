@@ -77,6 +77,9 @@ public:
     void flushUndo();
     void flushRedo();
 
+    void setBoard( Board* board );
+    Board* board() const;
+
     bool kingInCheck( const Colour& kingColour );
 
     void setUndoMoves( QStack< Movement* >* movesStack );

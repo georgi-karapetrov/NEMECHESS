@@ -9,13 +9,12 @@ GameEngine::GameEngine( const int rows,
                         const int numberOfPlayers,
                         Colour startingColour )
     : QObject( 0 ),
+//      m_undoMoves( QStack< Movement* >() ),
       m_board( new Board( rows, columns, cellWidth, cellHeght ) ),
       m_manipulator( m_board ),
       m_currentPlayerColour( startingColour ),
       m_quit( false ),
-      m_isFigureSelected( false ),
-      m_isFirstClick( true ),
-      m_inCheckFlag( false )
+      m_isFigureSelected( false )
 {
     m_widget = new Widget( 0 );
     qDebug() << "Widget created";
@@ -23,6 +22,8 @@ GameEngine::GameEngine( const int rows,
     m_model =  new MovesListModel( this );
     qDebug() << "Model created";
 
+//    m_manipulator.setBoard( m_board );
+//    m_manipulator.setUndoMoves( &m_undoMoves );
     m_undoMoves.push( new StartGameMovement( m_board ) );
     m_model->combineUndoRedo( &m_undoMoves, &m_redoMoves );
 

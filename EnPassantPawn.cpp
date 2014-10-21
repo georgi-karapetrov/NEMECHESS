@@ -42,7 +42,7 @@ ChessPieceType EnPassantPawn::pieceType()
     return ENPASSANT_PAWN_TYPE;
 }
 
-void EnPassantPawn::accept( Visitor &visitor )
+void EnPassantPawn::accept( Visitor& visitor, const Position& to )
 {
-    visitor.visit( this );
+    visitor.visit( this, to );
 }

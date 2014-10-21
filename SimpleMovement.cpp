@@ -3,7 +3,7 @@
 
 using namespace Chess::GameLogic::Movements;
 
-SimpleMovement::SimpleMovement( const Position& from, const Position& to, Board* const board, MovementFlags flags )
+SimpleMovement::SimpleMovement( Board* const board, const Position& from, const Position& to, MovementFlags flags )
     : Movement( board, flags ),
       m_from( from ),
       m_to( to )
@@ -24,21 +24,38 @@ bool SimpleMovement::doMove()
 //        m_capturedPieces.push_back( m_board->pieceAt( m_to ) );
 //    }
 
-    const bool isPieceMoved = m_board->movePiece( m_from, m_to ); 
-    if ( isPieceMoved )
+    if ( m_from == m_to ) // logic breaker
     {
-        ChessPiece* piece = m_board->pieceAt( m_to );
-
-        int currentMoves = m_board->passedMoves( piece );
-        m_board->setPassedMoves( piece, ++ currentMoves );
+        qDebug() << "Ka-kaw!";
+        if ( this->capturedPiece() != 0 ) // will cause unwanted beahaviour
+        {
+            m_board->addPiece( this->capturedPiece() );
+        }
     }
+    else
+    {
+        const bool isPieceMoved = m_board->movePiece( m_from, m_to );
+        if ( isPieceMoved )
+        {
+            ChessPiece* piece = m_board->pieceAt( m_to );
 
-    return isPieceMoved;
+            int currentMoves = m_board->passedMoves( piece );
+            m_board->setPassedMoves( piece, ++ currentMoves );
+        }
+
+        return isPieceMoved;
+    }
+    return true;
 }
 
 bool SimpleMovement::undoMove()
 {
     ChessPiece* const piece = m_board->pieceAt( m_to );
+
+    if ( m_from == m_to ) // another logic breaker // aka if the thing is an en-passant
+    {
+        m_board->removePiece( piece );
+    }
 
     bool tmp = m_board->movePiece( m_to, m_from );
     if ( ! tmp )

@@ -14,6 +14,7 @@ PiecesManipulator::PiecesManipulator( Board* board )
     : m_board( board )
     //  m_capturedPieces( QStack< ChessPiece*  >() )
 {
+//    m_moveVisitor.setMovesStack( m_undoMoves );
     m_takenVisitor.setCapturedPieces( &m_capturedPieces );
 }
 
@@ -26,6 +27,8 @@ PiecesManipulator::~PiecesManipulator()
 
 Error PiecesManipulator::makeAMove( const Position& from, const Position& to, Colour colour )  // just do it
 {
+    // the Visitors shall not be called unless everything is ok with the move
+
     if ( !m_board->isPiece( from ) || !m_board->isValidPosition( to ) )
     {
         return EmptyPosition;
@@ -59,14 +62,14 @@ Error PiecesManipulator::makeAMove( const Position& from, const Position& to, Co
         }
     }
 
-    //if the figure attempts m_capturedPiecesto move in its allowed movements
+    // if the figure attempts to move in its allowed movements
     QVector< Position > tmp = currentPiece->allowedMovements();
     if ( std::find( tmp.begin(), tmp.end(), to ) == tmp.end() )
     {
         return InvalidDestination;
     }
 
-    Movement* movement = new SimpleMovement( from, to, m_board );
+//    Movement* movement = new SimpleMovement( from, to, m_board );
 
     ChessPiece* forCapture = 0;
 
@@ -75,23 +78,22 @@ Error PiecesManipulator::makeAMove( const Position& from, const Position& to, Co
         forCapture = m_board->pieceAt( to );
     }
 
-    if ( movement->doMove() )
+  //  if ( movement->doMove() )
     {
         if ( forCapture != 0 )
         {
-            movement->setFlags( CAPTURE_FLAG );
+            //movement->setFlags( CAPTURE_FLAG );
 //            m_capturedPieces.push( forCapture ); // obsolete if Visitor is used
-            forCapture->accept( m_takenVisitor );
-            movement->setCapturedPiece( forCapture );
+            forCapture->accept( m_takenVisitor, to );
+//            movement->setCapturedPiece( forCapture );
         }
-        currentPiece->accept( m_moveVisitor );
-        m_undoMoves->push( movement );
+        currentPiece->accept( m_moveVisitor, to );
+//        m_undoMoves->push( movement );
         return Success;
     }
 
 
     return InvalidDestination;
-
 }
 
 QStack< ChessPiece* > PiecesManipulator::capturedPieces() const
@@ -216,14 +218,14 @@ bool PiecesManipulator::castling( const Colour& colour, const CastlingType& type
 
     //faking movements here
     //resulting in crashing undo
-    Movement* kingMovement = new SimpleMovement( king->position(),
+    Movement* kingMovement = new SimpleMovement( m_board,
+                                                 king->position(),
                                                  Position( castlingOffsetKing,
-                                                           king->position().y() ),
-                                                 m_board );
-    Movement* rookMovement = new SimpleMovement( rook->position(),
+                                                           king->position().y() ) );
+    Movement* rookMovement = new SimpleMovement( m_board,
+                                                 rook->position(),
                                                  Position( castlingOffsetRook,
-                                                           rook->position().y() ),
-                                                 m_board );
+                                                           rook->position().y() ) );
     QVector < Movement* > simpleMovements;
 
     simpleMovements.push_back( rookMovement );
@@ -328,6 +330,7 @@ bool PiecesManipulator::kingInCheck( const Colour& kingColour )
 void PiecesManipulator::setUndoMoves( QStack< Movement* >* movesStack )
 {
     m_undoMoves = movesStack;
+    m_moveVisitor.setMovesStack( movesStack );
 }
 
 QStack< Movement* >* PiecesManipulator::undoMoves() const
@@ -343,6 +346,16 @@ void PiecesManipulator::setRedoMoves( QStack<Movement *>* movesStack )
 QStack< Movement* >* PiecesManipulator::redoMoves() const
 {
     return m_redoMoves;
+}
+
+void PiecesManipulator::setBoard( Board* board )
+{
+    m_board = board;
+}
+
+Board* PiecesManipulator::board() const
+{
+    return m_board;
 }
 
 /*

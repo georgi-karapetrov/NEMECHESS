@@ -108,7 +108,7 @@ ChessPieceType Bishop::pieceType()
     return BISHOP_TYPE;
 }
 
-void Bishop::accept( Visitor& visitor )
+void Bishop::accept(Visitor& visitor , const Position& to )
 {
-    visitor.visit( this );
+    visitor.visit( this, to );
 }

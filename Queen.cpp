@@ -63,7 +63,7 @@ ChessPieceType Queen::pieceType()
     return QUEEN_TYPE;
 }
 
-void Queen::accept( Visitor& visitor )
+void Queen::accept(Visitor& visitor , const Position& to )
 {
-    visitor.visit( this );
+    visitor.visit( this, to );
 }

@@ -12,6 +12,7 @@ using namespace Chess::ChessComponents::ChessPieces;
 using namespace Chess::GameLogic::GameComponents;
 
 Visitor::Visitor()
+    : m_movesStack( 0 )
 {
 }
 
@@ -19,4 +20,12 @@ Visitor::~Visitor()
 {
 }
 
+void Visitor::setMovesStack( QStack< Movement* >* movementStack )
+{
+    m_movesStack = movementStack;
+}
 
+QStack< Movement* >* Visitor::movesStack() const
+{
+    return m_movesStack;
+}

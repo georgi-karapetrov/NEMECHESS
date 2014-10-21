@@ -3,6 +3,7 @@
 
 #include "Movement.h"
 #include "Position.h"
+#include <QDebug>
 #include <QVector>
 
 using namespace std;
@@ -24,9 +25,9 @@ using namespace Chess::ChessComponents::PlayField;
 class SimpleMovement : public Movement
 {
 public:
-    SimpleMovement( const Position& from = Position( 0, 0 ),
+    SimpleMovement( Board* const board,
+                    const Position& from = Position( 0, 0 ),
                     const Position& to   = Position( 0, 1 ),
-                    Board* const   board = 0,
                     MovementFlags flags = NORMALMOVE_FLAG );
     virtual ~SimpleMovement();
 

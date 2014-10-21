@@ -42,12 +42,19 @@ public:
     void setView( QListView* view );
     QListView* view() const;
 
+    void chichuAdi( QPainter& painter,
+                    const int x = 0,
+                    const int y = 0,
+                    const int size = 5,
+                    const int xOffset = 0,
+                    const int yOffset = 0 );
+
 protected:
     virtual void paintEvent( QPaintEvent* event );
     virtual void mouseReleaseEvent( QMouseEvent* event );
 
 signals:
-    void clickCell(QPoint point);
+    void clickCell( QPoint point );
 
 public slots:
     void movesListItemClicked( QModelIndex );

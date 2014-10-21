@@ -9,7 +9,7 @@ namespace Chess{
 
 enum MovementFlagsEnum
 {
-//    NORMALMOVE_FLAG = 0,
+    NO_FLAG = 0,
     NORMALMOVE_FLAG        =  1,
     KINGSIDECASTLING_FLAG  =  2,
     QUEENSIDECASTLING_FLAG =  4,
