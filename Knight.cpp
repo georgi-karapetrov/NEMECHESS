@@ -1,6 +1,8 @@
 #include "Knight.h"
 #include "Board.h"
 
+#include "Visitor.h"
+
 #include <cmath>
 #include <algorithm>
 
@@ -60,4 +62,9 @@ QVector< Position > Knight::allowedMovements()
 ChessPieceType Knight::pieceType()
 {
     return KNIGHT_TYPE;
+}
+
+void Knight::accept( Visitor& visitor )
+{
+    visitor.visit( this );
 }

@@ -123,13 +123,17 @@ void GameEngine::run()
 {
     this->setStandardGame();
 //    this->setPiecesForTesting();
+//      ChessPiece* pawn = new Pawn( Position( 0, 6 ), Chess::white, m_board );
+//      ChessPiece* pawn2 = new Pawn( Position( 1, 6 ), Chess::black, m_board );
+//      ChessPiece* enPassantPawn = new EnPassantPawn( Position( 0, 7 ), pawn );
+
+//      m_board->addPiece( pawn );
+//      m_board->addPiece( enPassantPawn );
+//      m_board->addPiece( pawn2 );
 }
 
 void GameEngine::clickCellListener( const QPoint& point )
 {
-
-
-
     this->chewCoordinates( point );
     emit( jobFinished() );
 }
@@ -404,7 +408,10 @@ void GameEngine::chewCoordinates( const QPoint& point )
                 qDebug() << "Wrong colour!";
                 return;
             }
-            this->selectFigure( position );
+            if ( m_board->pieceAt( position )->pieceType() != ENPASSANT_PAWN_TYPE )
+            {
+                this->selectFigure( position );
+            }
         }
     }
 }

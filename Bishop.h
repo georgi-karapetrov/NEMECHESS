@@ -19,6 +19,9 @@ public:
     virtual QVector< Position > allowedMovements();
 
     ChessPieceType pieceType();
+
+    virtual void accept(Visitor& visitor );
+
 };
 
 }

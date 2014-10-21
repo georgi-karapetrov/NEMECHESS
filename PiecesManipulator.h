@@ -6,6 +6,10 @@
 #include "Movement.h"
 #include "SimpleMovement.h"
 #include "ComplexMovement.h"
+//#include "EnPassantPawn.h"
+#include "Visitor.h"
+#include "MoveVisitor.h"
+#include "TakenVisitor.h"
 
 #include <QDebug>
 
@@ -92,6 +96,8 @@ private:
     QStack< ChessPiece* >  m_capturedPieces;
     Colour                 m_currentColour;
     Board*                 m_board;
+    MoveVisitor            m_moveVisitor;
+    TakenVisitor           m_takenVisitor;
 };
 
 }

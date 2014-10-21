@@ -5,6 +5,8 @@
 #include "Bishop.h"
 #include "King.h"
 #include "Queen.h"
+#include "MoveVisitor.h"
+#include "TakenVisitor.h"
 
 using namespace Chess::GameLogic::GameComponents;
 
@@ -12,11 +14,13 @@ PiecesManipulator::PiecesManipulator( Board* board )
     : m_board( board )
     //  m_capturedPieces( QStack< ChessPiece*  >() )
 {
+    m_takenVisitor.setCapturedPieces( &m_capturedPieces );
 }
 
 PiecesManipulator::~PiecesManipulator()
 {
     cout << "~PiecesManipulator()\n";
+
     this->flushUndo();
 }
 
@@ -27,7 +31,9 @@ Error PiecesManipulator::makeAMove( const Position& from, const Position& to, Co
         return EmptyPosition;
     }
 
-    if ( m_board->pieceAt( from )->colour() != colour )
+    ChessPiece* currentPiece = m_board->pieceAt( from );
+
+    if ( currentPiece->colour() != colour )
     {
         return WrongColour;
     }
@@ -40,27 +46,21 @@ Error PiecesManipulator::makeAMove( const Position& from, const Position& to, Co
 
     if ( m_board->isPiece( to ) )
     {
-        if ( m_board->pieceAt( from )->pieceType()  == KING_TYPE
+        if ( currentPiece->pieceType() == KING_TYPE
              && m_board->pieceAt( to )->pieceType() == ROOK_TYPE
-             && m_board->pieceAt( from )->colour()  == m_board->pieceAt( to )->colour() )
+             && currentPiece->colour() == m_board->pieceAt( to )->colour() )
         {
-            CastlingType castlingType = m_board->pieceAt( from )->position().x() < m_board->pieceAt( to )->position().x() ? KINGSIDE_CASTLING
-                                                                                                                          : QUEENSIDE_CASTLING;
-           if ( this->castling( m_board->pieceAt( from )->colour(), castlingType ) )
+            CastlingType castlingType = currentPiece->position().x() < m_board->pieceAt( to )->position().x() ? KINGSIDE_CASTLING
+                                                                                                              : QUEENSIDE_CASTLING;
+           if ( this->castling( currentPiece->colour(), castlingType ) )
            {
                return Castling;
            }
         }
     }
 
-//    if ( this->kingInCheck( colour ) )// && m_board->pieceAt( from )->pieceType() != KING_TYPE )
-//    {
-//        qDebug() << "Your king's in trouble!";
-//        return Check;
-//    }
-
     //if the figure attempts m_capturedPiecesto move in its allowed movements
-    QVector< Position > tmp = m_board->pieceAt( from )->allowedMovements();
+    QVector< Position > tmp = currentPiece->allowedMovements();
     if ( std::find( tmp.begin(), tmp.end(), to ) == tmp.end() )
     {
         return InvalidDestination;
@@ -68,14 +68,9 @@ Error PiecesManipulator::makeAMove( const Position& from, const Position& to, Co
 
     Movement* movement = new SimpleMovement( from, to, m_board );
 
-//    if ( ! movement->doMovem_capturedPieces() )
-//    {
-//        return InvalidDestination;
-//    }
-
     ChessPiece* forCapture = 0;
 
-    if ( m_board->isPiece( to ) && ! m_board->isAlly( to, m_board->pieceAt( from )->colour() ) )
+    if ( m_board->isPiece( to ) && ! m_board->isAlly( to, currentPiece->colour() ) )
     {
         forCapture = m_board->pieceAt( to );
     }
@@ -85,12 +80,15 @@ Error PiecesManipulator::makeAMove( const Position& from, const Position& to, Co
         if ( forCapture != 0 )
         {
             movement->setFlags( CAPTURE_FLAG );
-            m_capturedPieces.push( forCapture );
+//            m_capturedPieces.push( forCapture ); // obsolete if Visitor is used
+            forCapture->accept( m_takenVisitor );
             movement->setCapturedPiece( forCapture );
         }
+        currentPiece->accept( m_moveVisitor );
         m_undoMoves->push( movement );
         return Success;
     }
+
 
     return InvalidDestination;
 
@@ -111,7 +109,14 @@ bool PiecesManipulator::undo( bool isSilent )
 
         if ( ! m_capturedPieces.empty() && topMovement->flags().testFlag( CAPTURE_FLAG  ) )
         {
-            m_board->addPiece( m_capturedPieces.pop() );
+            ChessPiece* capturedPiece = m_capturedPieces.pop();
+            m_board->addPiece( capturedPiece );
+            if ( capturedPiece->pieceType() == ENPASSANT_PAWN_TYPE )
+            {
+                m_board->addPiece( m_capturedPieces.pop() );
+//                 TODO: think of an elegant way to make this work
+//                if (  )
+            }
         }
 
         // ohterStack.addPiece()
@@ -142,12 +147,12 @@ bool PiecesManipulator::redo()
 {
     if ( !m_redoMoves->empty() )
     {
-        Movement* const movement = m_redoMoves->top();
-        movement->doMove();
+        Movement* const topMovement = m_redoMoves->top();
+        topMovement->doMove();
 
-        if ( movement->capturedPiece() != 0 )
+        if ( topMovement->capturedPiece() != 0 )
         {
-            m_capturedPieces.push( movement->capturedPiece() );
+            m_capturedPieces.push( topMovement->capturedPiece() );
 //            m_board->addPiece( movement->capturedPiece() );
 //            movement->setCapturedPiece( 0 );
         }
@@ -340,3 +345,22 @@ QStack< Movement* >* PiecesManipulator::redoMoves() const
     return m_redoMoves;
 }
 
+/*
+    if ( currentPiece->pieceType() == PAWN_TYPE )
+    {
+        const int offset = currentPiece->colour() == white ? -1 : +1;
+        bool isPawnFirstMove = ( to.y() == from.y() + 2 * offset );
+        if ( isPawnFirstMove )
+        {
+            m_enPassantPawn = new EnPassantPawn( Position( from.x(), from.y() + offset ), currentPiece );
+        }
+
+        if ( m_enPassantPawn != 0 )
+        {
+            if ( to == m_enPassantPawn->position() )
+            {
+                forCapture = m_enPassantPawn->pawn();
+            }
+        }
+    }
+*/

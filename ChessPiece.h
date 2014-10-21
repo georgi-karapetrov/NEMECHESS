@@ -15,6 +15,13 @@ namespace Chess{
         black = 1
     };
 
+namespace GameLogic{
+namespace GameComponents{
+
+class Visitor;
+
+}
+}
 
 namespace ChessComponents {
 namespace PlayField {
@@ -27,15 +34,17 @@ using std::unordered_map;
 //using std::QStack;
 
 using namespace Chess::ChessComponents::PlayField;
+using namespace Chess::GameLogic::GameComponents;
 
 enum ChessPieceType
 {
-    PAWN_TYPE   = 0,
-    ROOK_TYPE   = 1,
-    KNIGHT_TYPE = 2,
-    BISHOP_TYPE = 3,
-    QUEEN_TYPE  = 4,
-    KING_TYPE   = 5
+    PAWN_TYPE           = 0,
+    ROOK_TYPE           = 1,
+    KNIGHT_TYPE         = 2,
+    BISHOP_TYPE         = 3,
+    QUEEN_TYPE          = 4,
+    KING_TYPE           = 5,
+    ENPASSANT_PAWN_TYPE = 6
 };
 
 inline Colour nextColour( const Colour& colour )
@@ -53,20 +62,25 @@ public:
     virtual ~ChessPiece();
 
     virtual void setPosition( const Position& position );
-    Position position() const;
+    Position position(  ) const;
 
     virtual bool takes( const Position& position ) = 0;
     virtual QVector< Position > allowedMovements() = 0;
+    virtual ChessPieceType pieceType() = 0;
 
     void setColour( const Colour& colour );
     Colour colour() const;
 
-    virtual ChessPieceType pieceType() = 0;
+    void setBoard( Board* board );
+    Board *board() const;
+
+    virtual void accept( Visitor& visitor ) = 0;
+
 
 protected:
     Position     m_position;
     Colour       m_colour;
-    const Board* m_board;
+    Board*       m_board; // const Board*
 
 public:
     char         m_sigil;

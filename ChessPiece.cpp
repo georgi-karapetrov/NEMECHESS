@@ -1,6 +1,8 @@
 #include "ChessPiece.h"
+#include "Visitor.h"
 
 using namespace Chess;
+using namespace Chess::GameLogic::GameComponents;
 using namespace Chess::ChessComponents::ChessPieces;
 
 ChessPiece::ChessPiece( const Position& position,
@@ -38,4 +40,15 @@ void ChessPiece::setColour( const Colour& colour )
 Colour ChessPiece::colour() const
 {
     return m_colour;
+}
+
+
+void ChessPiece::setBoard( Board *board )
+{
+    m_board = board;
+}
+
+Board* ChessPiece::board() const
+{
+    return m_board;
 }

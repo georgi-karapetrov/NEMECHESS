@@ -28,6 +28,8 @@ public:
 
     ChessPieceType pieceType();
 
+    virtual void accept(Visitor& visitor );
+
 private:
     Rook*   m_rook;
     Bishop* m_bishop;

@@ -2,7 +2,7 @@
 
 const int BoardInterface::X_OFFSET = 20;
 const int BoardInterface::Y_OFFSET = 20;
-const QString BoardInterface::IMG_FOLDER = "impr/"; //other is "etc/"
+const QString BoardInterface::IMG_FOLDER = "impr/"; // other is "etc/"
 const QString BoardInterface::EXT = ".png";
 
 BoardInterface::BoardInterface( Board* board )

@@ -17,6 +17,8 @@ public:
     bool takes( const Position& position );
     virtual QVector< Position > allowedMovements();
 
+    virtual void accept(Visitor& visitor );
+
     ChessPieceType pieceType();
 
 private:

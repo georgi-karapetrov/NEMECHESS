@@ -34,7 +34,11 @@ SOURCES += main.cpp\
     SimpleMovement.cpp \
     BoardInterface.cpp \
     MovesListModel.cpp \
-    StartGameMovement.cpp
+    StartGameMovement.cpp \
+    EnPassantPawn.cpp \
+    MoveVisitor.cpp \
+    TakenVisitor.cpp \
+    Visitor.cpp
 
 HEADERS  += Widget.h \
     Bishop.h \
@@ -55,7 +59,11 @@ HEADERS  += Widget.h \
     SimpleMovement.h \
     BoardInterface.h \
     MovesListModel.h \
-    StartGameMovement.h
+    StartGameMovement.h \
+    EnPassantPawn.h \
+    MoveVisitor.h \
+    TakenVisitor.h \
+    Visitor.h
 
 OTHER_FILES += \
     NEMECHESS.pro.user

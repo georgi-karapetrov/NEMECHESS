@@ -5,10 +5,12 @@
 #include <QVector>
 #include "ChessPiece.h"
 #include "Board.h"
+#include "EnPassantPawn.h"
 
 namespace Chess{
 namespace ChessComponents{
 namespace ChessPieces{
+
 
 class Pawn : public ChessPiece
 {
@@ -25,11 +27,24 @@ public:
 
     ChessPieceType pieceType();
 
-private:
-    bool canAddToMovements( const Position& position ) const;
+    void makeEnPassant();
+
+    EnPassantPawn* enPassantPawn();
+    bool isEnPassant();
+
+    void promoteTo( const ChessPieceType& newPieceType );
+
+    int offset() const;
+
+    virtual void accept( Visitor& visitor );
 
 private:
-    Position m_initialPosition;
+    bool canAttackAt( const Position& position ) const;
+
+private:
+    int            m_offset;
+    Position       m_initialPosition;
+    EnPassantPawn* m_enPassantPawn;
 };
 
 }

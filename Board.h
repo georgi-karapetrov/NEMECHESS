@@ -42,6 +42,7 @@ public:
     unordered_map< Position, ChessPiece* > piecesMap() const;
 
     void addPiece( ChessPiece* piece );
+    void removePiece( ChessPiece* piece );
     bool movePiece( const Position& from, const Position& to );
 
     bool placePieces( QVector < ChessPiece* > pieces,

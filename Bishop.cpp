@@ -1,6 +1,8 @@
 #include "Bishop.h"
 #include "Board.h"
 
+#include "Visitor.h"
+
 using namespace std;
 //using Chess::ChessPieceType;
 using namespace Chess::ChessComponents::ChessPieces;
@@ -104,4 +106,9 @@ QVector<Position> Bishop::allowedMovements()
 ChessPieceType Bishop::pieceType()
 {
     return BISHOP_TYPE;
+}
+
+void Bishop::accept( Visitor& visitor )
+{
+    visitor.visit( this );
 }

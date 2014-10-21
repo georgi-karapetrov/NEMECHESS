@@ -143,6 +143,8 @@ bool Board::isPiece( const Position& position ) const
         return false;
     }
 
+//    iter->second->position()
+
     return iter->second != 0;
 }
 
@@ -157,9 +159,6 @@ void Board::addPiece( ChessPiece* piece )
 {
     if ( isValidPosition( piece->position() ) )
     {
-        // TODO: remove white and black pieces NOPE
-
-
         m_piecesMap[ piece->position() ] = piece;
 
         auto tmpPiecesVector = piece->colour() == white ?  m_whitePieces : m_blackPieces;
@@ -185,6 +184,13 @@ void Board::addPiece( ChessPiece* piece )
 
 }
 
+void Board::removePiece( ChessPiece* piece )
+{
+    if ( piece != 0 )
+    {
+        this->m_piecesMap[ piece->position() ] = 0;
+    }
+}
 
 bool Board::movePiece( const Position& from, const Position& to )
 {
@@ -288,10 +294,6 @@ bool Board::inLoS( const Position& position, QVector < ChessPiece* > aVector ) c
                     return true;
                 }
             }
-//            if ( aVector[ i ]->takes( position ) )
-//            {
-//                return true;
-//            }
         }
     }
     return false;

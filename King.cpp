@@ -1,6 +1,8 @@
 #include "King.h"
 #include "Board.h"
 
+#include "Visitor.h"
+
 using namespace std;
 using namespace Chess::ChessComponents::ChessPieces;
 
@@ -81,4 +83,9 @@ QVector< Position > King::allowedMovements()
 ChessPieceType King::pieceType()
 {
     return KING_TYPE;
+}
+
+void King::accept( Visitor& visitor )
+{
+    visitor.visit( this );
 }

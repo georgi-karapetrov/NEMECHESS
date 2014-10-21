@@ -1,6 +1,8 @@
 #include "Queen.h"
 #include "Board.h"
 
+#include "Visitor.h"
+
 using namespace std;
 //using Chess::ChessPieceType;
 using namespace Chess::ChessComponents::ChessPieces;
@@ -59,4 +61,9 @@ void Queen::setPosition( const Position& position )
 ChessPieceType Queen::pieceType()
 {
     return QUEEN_TYPE;
+}
+
+void Queen::accept( Visitor& visitor )
+{
+    visitor.visit( this );
 }

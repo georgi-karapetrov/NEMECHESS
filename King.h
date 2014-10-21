@@ -24,6 +24,8 @@ public:
 
     ChessPieceType pieceType();
 
+    virtual void accept(Visitor& visitor );
+
 private:
     void checkAllowedMovements( const Position& position, QVector< Position >& aVector );
     bool inCheck();

@@ -1,6 +1,8 @@
 #include "Rook.h"
 #include "Board.h"
 
+#include "Visitor.h"
+
 using namespace std;
 //using Chess::ChessPieceType;
 using namespace Chess::ChessComponents::ChessPieces;
@@ -108,5 +110,7 @@ ChessPieceType Rook::pieceType()
     return ROOK_TYPE;
 }
 
-
-
+void Rook::accept( Visitor& visitor )
+{
+    visitor.visit( this );
+}
